@@ -797,4 +797,5 @@ async def general_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
 
+    # EC2의 private IP를 사용하거나 모든 인터페이스에서 수신하도록 설정
     uvicorn.run(app, host="0.0.0.0", port=8000)

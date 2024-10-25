@@ -18,7 +18,7 @@ class StockAnalysisViewModel: ObservableObject {
         
         let request = StockAnalysisRequest(symbol: symbol, language: language)
         
-        guard let url = URL(string: "http://your-server-address:8000/api/analyze") else {
+        guard let url = URL(string: "http://3.210.156.34:8000/api/analyze") else {
             error = "Invalid URL"
             isLoading = false
             return
