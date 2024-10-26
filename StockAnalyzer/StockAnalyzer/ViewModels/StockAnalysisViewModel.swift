@@ -7,6 +7,7 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// ViewModels/StockAnalysisViewModel.swift 수정
 class StockAnalysisViewModel: ObservableObject {
     @Published var result: StockAnalysisResponse?
     @Published var isLoading = false
@@ -18,7 +19,7 @@ class StockAnalysisViewModel: ObservableObject {
         
         let request = StockAnalysisRequest(symbol: symbol, language: language)
         
-        guard let url = URL(string: "http://3.210.156.34:8000/api/analyze") else {
+        guard let url = URL(string: "https://aistockadvisor.net/api/analyze") else {
             error = "Invalid URL"
             isLoading = false
             return
@@ -31,30 +32,38 @@ class StockAnalysisViewModel: ObservableObject {
         do {
             urlRequest.httpBody = try JSONEncoder().encode(request)
         } catch {
-            self.error = "Failed to encode request"
+            self.error = "Failed to encode request: \(error.localizedDescription)"
             isLoading = false
             return
         }
         
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
             DispatchQueue.main.async {
-                self.isLoading = false
+                self?.isLoading = false
                 
                 if let error = error {
-                    self.error = error.localizedDescription
+                    self?.error = "Network error: \(error.localizedDescription)"
                     return
                 }
                 
                 guard let data = data else {
-                    self.error = "No data received"
+                    self?.error = "No data received"
                     return
                 }
                 
+                // 디버깅을 위해 JSON 응답 출력
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("Received JSON response: \(jsonString)")
+                }
+                
                 do {
-                    let result = try JSONDecoder().decode(StockAnalysisResponse.self, from: data)
-                    self.result = result
+                    let decoder = JSONDecoder()
+                    // decoder.keyDecodingStrategy = .convertFromSnakeCase  // 이 줄 제거
+                    let result = try decoder.decode(StockAnalysisResponse.self, from: data)
+                    self?.result = result
                 } catch {
-                    self.error = "Failed to decode response: \(error.localizedDescription)"
+                    self?.error = "Failed to decode response: \(error.localizedDescription)"
+                    print("Decoding error details: \(error)")
                 }
             }
         }.resume()

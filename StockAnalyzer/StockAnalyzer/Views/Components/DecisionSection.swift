@@ -8,8 +8,16 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// DecisionSection.swift 수정
 struct DecisionSection: View {
     let result: StockAnalysisResponse
+    
+    var percentageText: String {
+        if result.decision != "HOLD" {
+            return "\(result.percentage)%"
+        }
+        return ""
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -21,8 +29,8 @@ struct DecisionSection: View {
                     .font(.title)
                     .foregroundColor(decisionColor)
                 
-                if result.decision != "HOLD" {
-                    Text("\(result.percentage)%")
+                if !percentageText.isEmpty {
+                    Text(percentageText)
                         .font(.title2)
                 }
             }

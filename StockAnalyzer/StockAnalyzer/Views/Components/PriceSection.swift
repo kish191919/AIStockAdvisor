@@ -7,6 +7,7 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// Views/Components/PriceSection.swift 수정
 struct PriceSection: View {
     let result: StockAnalysisResponse
     
@@ -19,7 +20,7 @@ struct PriceSection: View {
                 VStack(alignment: .leading) {
                     Text("Current Price")
                         .font(.subheadline)
-                    Text("$\(String(format: "%.2f", result.current_price))")
+                    Text("$\(String(format: "%.2f", result.currentPrice))")
                         .font(.title2)
                 }
                 
@@ -28,7 +29,7 @@ struct PriceSection: View {
                 VStack(alignment: .trailing) {
                     Text("Expected Next Day")
                         .font(.subheadline)
-                    Text("$\(String(format: "%.2f", result.expected_next_day_price))")
+                    Text("$\(String(format: "%.2f", result.expectedNextDayPrice))")
                         .font(.title2)
                 }
             }

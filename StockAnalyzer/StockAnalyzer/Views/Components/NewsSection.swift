@@ -7,6 +7,7 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// Views/Components/NewsSection.swift 수정
 struct NewsSection: View {
     let news: NewsData
     
@@ -15,7 +16,7 @@ struct NewsSection: View {
             Text("Latest News")
                 .font(.headline)
             
-            ForEach(news.google_news.prefix(3), id: \.title) { item in
+            ForEach(Array(news.googleNews.prefix(3)), id: \.title) { item in
                 NewsItemView(item: item)
             }
         }

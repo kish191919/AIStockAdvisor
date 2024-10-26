@@ -29,6 +29,34 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
+
+class CustomHttpAdapter(HTTPAdapter):
+    def __init__(self, *args, **kwargs):
+        self.ssl_context = create_urllib3_context(
+            ssl_version=None,
+            cert_reqs=None,
+            options=None
+        )
+        super().__init__(*args, **kwargs)
+
+    def init_poolmanager(self, *args, **kwargs):
+        kwargs['ssl_context'] = self.ssl_context
+        return super().init_poolmanager(*args, **kwargs)
+
+    def proxy_manager_for(self, *args, **kwargs):
+        kwargs['ssl_context'] = self.ssl_context
+        return super().proxy_manager_for(*args, **kwargs)
+
+def create_session():
+    session = requests.Session()
+    adapter = CustomHttpAdapter()
+    session.mount('https://', adapter)
+    return session
+
+
 # Configuration class
 class Config:
     ROBINHOOD_USERNAME = os.getenv("username")
@@ -56,6 +84,8 @@ class AIStockAdvisor:
         self.db_connection = self._setup_database('ai_stock_analysis_records.db')
         self.performance_db_connection = self._setup_database('ai_stock_performance.db')
         self._migrate_and_update_performance_data()
+        self.session = create_session()
+
 
     def _get_login(self):
         try:
@@ -797,5 +827,11 @@ async def general_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
 
-    # EC2의 private IP를 사용하거나 모든 인터페이스에서 수신하도록 설정
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    uvicorn.run(
+        "AIStockAdvisor:app",  # 파일명:app_변수명
+        host="0.0.0.0",
+        port=8000,
+        reload=False,
+        workers=4
+    )

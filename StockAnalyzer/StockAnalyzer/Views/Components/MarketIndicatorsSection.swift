@@ -15,7 +15,7 @@ struct MarketIndicatorsSection: View {
             Text("Market Indicators")
                 .font(.headline)
             
-            if let vix = result.vix_index {
+            if let vix = result.vixIndex {  // vix_index -> vixIndex
                 HStack {
                     Text("VIX Index")
                     Spacer()
@@ -26,10 +26,10 @@ struct MarketIndicatorsSection: View {
             HStack {
                 Text("Fear & Greed Index")
                 Spacer()
-                Text("\(result.fear_greed_index.value)")
+                Text(String(format: "%.1f", result.fearGreedIndex.value))  // Int -> Double로 형식 변경
             }
             
-            Text(result.fear_greed_index.description)
+            Text(result.fearGreedIndex.description)
                 .font(.caption)
         }
         .padding()
