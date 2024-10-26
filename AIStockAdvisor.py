@@ -322,10 +322,14 @@ class AIStockAdvisor:
         }
 
     def get_news(self):
+        google_news = self._get_news_from_google()
+        alpha_vantage_news = self._get_news_from_alpha_vantage()
+        robinhood_news = self._get_news_from_robinhood()
+
         return {
-            "google_news": self._get_news_from_google(),
-            "alpha_vantage_news": self._get_news_from_alpha_vantage(),
-            "robinhood_news": self._get_news_from_robinhood()
+            "google_news": google_news,
+            "alpha_vantage_news": alpha_vantage_news,
+            "robinhood_news": robinhood_news
         }
 
     def _get_news_from_google(self):
@@ -345,29 +349,15 @@ class AIStockAdvisor:
             news_items = []
             for result in data.get('organic_results', [])[:5]:
                 news_items.append({
-                    'title': result['title'],
-                    'date': result['date']
+                    "title": result['title'],
+                    "date": result['date'],
+                    "url": result.get('link', ''),
+                    "source": 'Google News'
                 })
             self.logger.info(f"Retrieved {len(news_items)} news items from Google")
-            return news_items
+            return news_items  # 딕셔너리 리스트 직접 반환
         except Exception as e:
             self.logger.error(f"Error during Google News API request: {e}")
-            return []
-
-    def _get_news_from_robinhood(self):
-        self.logger.info("Fetching news from Robinhood")
-        try:
-            news_data = r.robinhood.stocks.get_news(self.stock)
-            news_items = []
-            for item in news_data[:5]:
-                news_items.append({
-                    'title': item['title'],
-                    'published_at': item['published_at']
-                })
-            self.logger.info(f"Retrieved {len(news_items)} news items from Robinhood")
-            return news_items
-        except Exception as e:
-            self.logger.error(f"Error fetching news from Robinhood: {str(e)}")
             return []
 
     def _get_news_from_alpha_vantage(self):
@@ -377,24 +367,45 @@ class AIStockAdvisor:
             response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            if "feed" not in data:
-                self.logger.warning("No news data found in Alpha Vantage response")
-                return []
             news_items = []
-            for item in data["feed"][:5]:
-                title = item.get("title", "No title")
-                time_published = item.get("time_published", "No date")
-                if time_published != "No date":
-                    dt = datetime.strptime(time_published, "%Y%m%dT%H%M%S")
-                    time_published = dt.strftime("%Y-%m-%d %H:%M:%S")
-                news_items.append({
-                    'title': title,
-                    'pubDate': time_published
-                })
+            if "feed" in data:
+                for item in data["feed"][:5]:
+                    time_published = item.get("time_published", "No date")
+                    if time_published != "No date":
+                        try:
+                            dt = datetime.strptime(time_published, "%Y%m%dT%H%M%S")
+                            time_published = dt.strftime("%Y-%m-%d %H:%M:%S")
+                        except:
+                            pass
+
+                    news_items.append({
+                        "title": item.get("title", "No title"),
+                        "date": time_published,
+                        "url": item.get("url", ""),
+                        "source": 'Alpha Vantage'
+                    })
             self.logger.info(f"Retrieved {len(news_items)} news items from Alpha Vantage")
-            return news_items
+            return news_items  # 딕셔너리 리스트 직접 반환
         except Exception as e:
             self.logger.error(f"Error during Alpha Vantage API request: {e}")
+            return []
+
+    def _get_news_from_robinhood(self):
+        self.logger.info("Fetching news from Robinhood")
+        try:
+            news_data = r.robinhood.stocks.get_news(self.stock)
+            news_items = []
+            for item in news_data[:5]:
+                news_items.append({
+                    "title": item['title'],
+                    "date": item['published_at'],
+                    "url": item.get('url', ''),
+                    "source": 'Robinhood'
+                })
+            self.logger.info(f"Retrieved {len(news_items)} news items from Robinhood")
+            return news_items  # 딕셔너리 리스트 직접 반환
+        except Exception as e:
+            self.logger.error(f"Error fetching news from Robinhood: {str(e)}")
             return []
 
     def _translate_to_language(self, text, lang='en'):
@@ -686,6 +697,22 @@ class DataFrameModel(BaseModel):
     columns: List[str]
     data: List[List[Any]]
 
+class NewsItem(BaseModel):
+    title: str
+    date: str
+    url: str
+    source: str
+
+    class Config:
+        from_attributes = True
+
+
+class NewsData(BaseModel):
+    google_news: List[NewsItem]
+    alpha_vantage_news: List[NewsItem]
+    robinhood_news: List[NewsItem]
+
+
 # Response 모델
 class StockAnalysisResponse(BaseModel):
     decision: str
@@ -695,9 +722,12 @@ class StockAnalysisResponse(BaseModel):
     expected_next_day_price: float
     vix_index: Optional[float]
     fear_greed_index: Dict[str, Any]
-    news: Dict[str, Any]
+    news: Dict[str, List[Dict[str, str]]]  # NewsItem 대신 Dict 사용
     monthly_df: Optional[DataFrameModel] = None
     daily_df: Optional[DataFrameModel] = None
+
+    class Config:
+        from_attributes = True
 
 
 def serialize_dataframe(df: pd.DataFrame) -> Optional[DataFrameModel]:
@@ -744,6 +774,7 @@ async def analyze_stock(request: StockAnalysisRequest):
         monthly_df_serialized = serialize_dataframe(monthly_df)
         daily_df_serialized = serialize_dataframe(daily_df)
 
+        # 응답 생성
         response = StockAnalysisResponse(
             decision=result.decision,
             percentage=result.percentage,
@@ -752,10 +783,11 @@ async def analyze_stock(request: StockAnalysisRequest):
             expected_next_day_price=result.expected_next_day_price,
             vix_index=vix_index,
             fear_greed_index=fgi,
-            news=news,
+            news=news,  # 이미 딕셔너리 형태로 되어 있음
             monthly_df=monthly_df_serialized,
             daily_df=daily_df_serialized
         )
+
         return response
 
     except Exception as e:
