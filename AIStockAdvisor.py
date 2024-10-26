@@ -19,8 +19,6 @@ from openai import OpenAI
 from deep_translator import GoogleTranslator
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
-from fastapi.encoders import jsonable_encoder
-from tenacity import retry, stop_after_attempt, wait_exponential
 from transformers import GPT2TokenizerFast
 
 import requests
@@ -39,30 +37,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-class CustomHttpAdapter(HTTPAdapter):
-    def __init__(self, *args, **kwargs):
-        self.ssl_context = create_urllib3_context(
-            ssl_version=None,
-            cert_reqs=None,
-            options=None
-        )
-        super().__init__(*args, **kwargs)
-
-    def init_poolmanager(self, *args, **kwargs):
-        kwargs['ssl_context'] = self.ssl_context
-        return super().init_poolmanager(*args, **kwargs)
-
-    def proxy_manager_for(self, *args, **kwargs):
-        kwargs['ssl_context'] = self.ssl_context
-        return super().proxy_manager_for(*args, **kwargs)
-
-
-def create_session():
-    session = requests.Session()
-    adapter = CustomHttpAdapter()
-    session.mount('https://', adapter)
-    return session
 
 
 # Configuration class
@@ -94,7 +68,6 @@ class AIStockAdvisor:
         self.db_connection = self._setup_database('ai_stock_analysis_records.db')
         self.performance_db_connection = self._setup_database('ai_stock_performance.db')
         self._migrate_and_update_performance_data()
-        self.session = create_session()
         self.tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
     def count_tokens(self, text: str) -> int:
@@ -137,13 +110,14 @@ class AIStockAdvisor:
         daily_historicals = r.robinhood.stocks.get_stock_historicals(
             self.stock, interval="10minute", span="day", bounds="regular"
         )
-        monthly_df = self._process_df(monthly_historicals)
-        daily_df = self._process_df(daily_historicals)
+        monthly_df = self._process_df(monthly_historicals, interval_type='monthly')
+        daily_df = self._process_df(daily_historicals, interval_type='daily')
         return self._add_indicators(monthly_df, daily_df)
 
-    def _process_df(self, historicals):
+    def _process_df(self, historicals, interval_type='daily'):
         """
         히스토리컬 데이터를 DataFrame으로 변환
+        interval_type: 'daily' 또는 'monthly'
         """
         try:
             if not historicals:
@@ -181,10 +155,25 @@ class AIStockAdvisor:
             # 날짜 처리
             if 'Date' in df.columns:
                 df['Date'] = pd.to_datetime(df['Date'])
+
+                if interval_type == 'monthly':
+                    # monthly data인 경우 날짜만 표시
+                    df['Date'] = df['Date'].dt.date
+                    # 중복된 날짜에 대해 마지막 값만 사용
+                    df = df.groupby('Date').last().reset_index()
+                else:
+                    # daily data인 경우 분까지만 표시 (초 단위 제거)
+                    df['Date'] = df['Date'].dt.floor('min')
+
                 df.set_index('Date', inplace=True)
 
-            # 데이터 타입 변환
-            for col in ['Open', 'Close', 'High', 'Low']:
+            # 데이터 타입 변환 및 소수점 처리
+            numeric_columns = ['Open', 'Close', 'High', 'Low', 'SMA', 'STD',
+                               'Upper_Band', 'Lower_Band', 'RSI', 'MACD',
+                               'Signal_Line', 'MACD_Histogram', 'EMA_fast',
+                               'EMA_slow', 'MA_10', 'MA_20']
+
+            for col in numeric_columns:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
 
@@ -200,7 +189,7 @@ class AIStockAdvisor:
 
     def _add_indicators(self, monthly_df, daily_df):
         """
-        모든 기술적 지표 추가
+        모든 기술적 지표 추가 및 소숫점 처리
         """
         try:
             logger.info("Adding technical indicators")
@@ -215,6 +204,28 @@ class AIStockAdvisor:
 
             if not monthly_df.empty:
                 monthly_df = self._calculate_moving_averages(monthly_df)
+
+            # 소숫점 처리
+            numeric_columns = ['Open', 'Close', 'High', 'Low', 'SMA', 'STD',
+                               'Upper_Band', 'Lower_Band', 'RSI', 'MACD',
+                               'Signal_Line', 'MACD_Histogram', 'EMA_fast',
+                               'EMA_slow', 'MA_10', 'MA_20']
+
+            # monthly_df 소숫점 처리
+            if not monthly_df.empty:
+                for col in numeric_columns:
+                    if col in monthly_df.columns:
+                        monthly_df[col] = monthly_df[col].apply(
+                            lambda x: round(x, 5) if abs(x) >= 0.01 else x
+                        )
+
+            # daily_df 소숫점 처리
+            if not daily_df.empty:
+                for col in numeric_columns:
+                    if col in daily_df.columns:
+                        daily_df[col] = daily_df[col].apply(
+                            lambda x: round(x, 5) if abs(x) >= 0.01 else x
+                        )
 
             logger.info(f"Monthly DataFrame columns after indicators: {monthly_df.columns.tolist()}")
             logger.info(f"Daily DataFrame columns after indicators: {daily_df.columns.tolist()}")
@@ -328,42 +339,42 @@ class AIStockAdvisor:
         }
 
     def get_news(self):
-        google_news = self._get_news_from_google()
+        yahoo_finance_news = self._get_news_from_yahoo()
         alpha_vantage_news = self._get_news_from_alpha_vantage()
         robinhood_news = self._get_news_from_robinhood()
 
         return {
-            "google_news": google_news,
+            "yahoo_finance_news": yahoo_finance_news,
             "alpha_vantage_news": alpha_vantage_news,
             "robinhood_news": robinhood_news
         }
 
-    def _get_news_from_google(self):
-        self.logger.info("Fetching news from Google")
-        url = "https://www.searchapi.io/api/v1/search"
-        params = {
-            "api_key": Config.SERPAPI_API_KEY,
-            "engine": "google_news",
-            "q": self.stock,
-            "num": 5
-        }
-        headers = {"Accept": "application/json"}
+    def _get_news_from_yahoo(self):
+        self.logger.info(f"Fetching news from Yahoo Finance for {self.stock}")
         try:
-            response = requests.get(url, params=params, headers=headers)
-            response.raise_for_status()
-            data = response.json()
+            # Yahoo Finance Ticker 객체 생성
+            ticker = yf.Ticker(self.stock)
+
+            # 뉴스 데이터 가져오기
+            news_data = ticker.news
             news_items = []
-            for result in data.get('organic_results', [])[:5]:
+
+            # 최대 5개의 뉴스 항목 처리
+            for item in news_data[:5]:
+                # Unix timestamp를 datetime으로 변환
+                news_date = datetime.fromtimestamp(item['providerPublishTime']).strftime('%Y-%m-%d %H:%M:%S')
+
                 news_items.append({
-                    "title": result['title'],
-                    "date": result['date'],
-                    "url": result.get('link', ''),
-                    "source": 'Google News'
+                    "title": item['title'],
+                    "date": news_date,
+                    "url": item.get('link', ''),
+                    "source": 'Yahoo Finance'
                 })
-            self.logger.info(f"Retrieved {len(news_items)} news items from Google")
-            return news_items  # 딕셔너리 리스트 직접 반환
+
+            self.logger.info(f"Retrieved {len(news_items)} news items from Yahoo Finance")
+            return news_items
         except Exception as e:
-            self.logger.error(f"Error during Google News API request: {e}")
+            self.logger.error(f"Error fetching news from Yahoo Finance: {str(e)}")
             return []
 
     def _get_news_from_alpha_vantage(self):
@@ -627,7 +638,7 @@ class AIStockAdvisor:
 
             # 뉴스 개수 제한
             news = {
-                "google_news": news["google_news"][:3],
+                "yahoo_finance_news": news["yahoo_finance_news"][:3],
                 "alpha_vantage_news": news["alpha_vantage_news"][:3],
                 "robinhood_news": news["robinhood_news"][:3]
             }
@@ -753,21 +764,6 @@ class DataFrameModel(BaseModel):
     columns: List[str]
     data: List[List[Any]]
 
-class NewsItem(BaseModel):
-    title: str
-    date: str
-    url: str
-    source: str
-
-    class Config:
-        from_attributes = True
-
-
-class NewsData(BaseModel):
-    google_news: List[NewsItem]
-    alpha_vantage_news: List[NewsItem]
-    robinhood_news: List[NewsItem]
-
 
 # Response 모델
 class StockAnalysisResponse(BaseModel):
@@ -795,18 +791,6 @@ def serialize_dataframe(df: pd.DataFrame) -> Optional[DataFrameModel]:
         columns=df.columns.tolist(),
         data=df.values.tolist()
     )
-
-# 클라이언트 측에서 DataFrame을 재구성하기 위한 함수
-def reconstruct_dataframe(df_model: DataFrameModel) -> pd.DataFrame:
-    if df_model is None:
-        return None
-
-    df = pd.DataFrame(
-        data=df_model.data,
-        index=df_model.index,
-        columns=df_model.columns
-    )
-    return df
 
 @app.get("/")
 async def root():

@@ -22,3 +22,4 @@ schedule
 fastapi
 uvicorn
 pydantic
+transformers

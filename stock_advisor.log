@@ -443,3 +443,237 @@ daily_df
 2024-10-26 02:42:53,070 - nvda_analyzer - INFO - Received response from OpenAI
 2024-10-26 02:42:53,070 - nvda_analyzer - INFO - Translating text to ko
 2024-10-26 02:42:53,588 - nvda_analyzer - INFO - Translation successful
+2024-10-26 09:25:41,881 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-26 09:25:41,882 - nvda_analyzer - INFO - Current OTP: 028308
+2024-10-26 09:25:42,022 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 09:25:42,047 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 09:25:42,048 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 09:25:42,057 - nvda_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 09:25:42,057 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 09:25:42,057 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-26 09:25:42,268 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-26 09:25:42,332 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:25:42,338 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:25:42,338 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:25:42,339 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:25:42,340 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 09:25:42,340 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:25:42,340 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:25:42,344 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 09:25:42,344 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 09:25:42,344 - nvda_analyzer - INFO - Fetching news from Google
+2024-10-26 09:25:42,582 - nvda_analyzer - ERROR - Error during Google News API request: 429 Client Error: Too Many Requests for url: https://www.searchapi.io/api/v1/search?api_key=b8EChC8n7pyLBHEdKjHb6K6N&engine=google_news&q=nvda&num=5
+2024-10-26 09:25:42,584 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 09:25:42,802 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 09:25:42,802 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 09:25:42,871 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 09:25:42,873 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 09:25:43,043 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-26 09:25:43,068 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-26 09:25:43,068 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 09:25:43,334 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 09:25:43,366 - nvda_analyzer - INFO - Token counts:
+                    System prompt: 8
+                    Input data: 12620
+                    YouTube transcript: 9610
+                    Total: 22238
+                
+2024-10-26 09:25:43,366 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-26 09:25:47,506 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 09:25:47,515 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-26 09:25:47,515 - nvda_analyzer - INFO - Translating text to ko
+2024-10-26 09:25:47,921 - nvda_analyzer - INFO - Translation successful
+2024-10-26 09:41:36,199 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-26 09:41:36,199 - nvda_analyzer - INFO - Current OTP: 623559
+2024-10-26 09:41:36,350 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 09:41:36,380 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 09:41:36,380 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 09:41:36,384 - nvda_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 09:41:36,385 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 09:41:36,385 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-26 09:41:36,606 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-26 09:41:36,663 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:41:36,667 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:41:36,667 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:41:36,668 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:41:36,668 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 09:41:36,668 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:41:36,668 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:41:36,672 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 09:41:36,672 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 09:41:36,672 - nvda_analyzer - INFO - Fetching news from Google
+2024-10-26 09:41:37,173 - nvda_analyzer - ERROR - Error during Google News API request: 429 Client Error: Too Many Requests for url: https://www.searchapi.io/api/v1/search?api_key=b8EChC8n7pyLBHEdKjHb6K6N&engine=google_news&q=nvda&num=5
+2024-10-26 09:41:37,174 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 09:41:37,330 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 09:41:37,331 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 09:41:37,404 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 09:41:37,405 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 09:41:37,500 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-26 09:41:37,526 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-26 09:41:37,526 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 09:41:37,784 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 09:41:37,802 - nvda_analyzer - INFO - Token counts:
+                    System prompt: 8
+                    Input data: 12620
+                    YouTube transcript: 1970
+                    Total: 14598
+                
+2024-10-26 09:41:37,802 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-26 09:41:41,060 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 09:41:41,069 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-26 09:41:41,069 - nvda_analyzer - INFO - Translating text to ko
+2024-10-26 09:41:42,396 - nvda_analyzer - INFO - Translation successful
+2024-10-26 09:51:25,549 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-26 09:51:25,550 - tsla_analyzer - INFO - Current OTP: 248031
+2024-10-26 09:51:25,696 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 09:51:25,729 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 09:51:25,729 - tsla_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 09:51:25,740 - tsla_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 09:51:25,740 - tsla_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 09:51:25,740 - tsla_analyzer - INFO - Performance data migration and update completed
+2024-10-26 09:51:25,973 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-26 09:51:26,029 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:51:26,034 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:51:26,034 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:51:26,035 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:51:26,035 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 09:51:26,035 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:51:26,035 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:51:26,040 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 09:51:26,040 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 09:51:26,040 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-26 09:51:26,308 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-26 09:51:26,308 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 09:51:26,466 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 09:51:26,467 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 09:51:26,540 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 09:51:26,541 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 09:51:26,634 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-26 09:51:26,667 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-26 09:51:26,667 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 09:51:26,750 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 09:51:26,767 - tsla_analyzer - INFO - Token counts:
+                    System prompt: 8
+                    Input data: 13199
+                    YouTube transcript: 1970
+                    Total: 15177
+                
+2024-10-26 09:51:26,767 - tsla_analyzer - INFO - Sending request to OpenAI
+2024-10-26 09:51:30,686 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 09:51:30,695 - tsla_analyzer - INFO - Received response from OpenAI
+2024-10-26 09:51:30,695 - tsla_analyzer - INFO - Translating text to ko
+2024-10-26 09:51:32,222 - tsla_analyzer - INFO - Translation successful
+2024-10-26 09:57:22,974 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-26 09:57:22,974 - tsla_analyzer - INFO - Current OTP: 362756
+2024-10-26 09:57:23,137 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 09:57:23,165 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 09:57:23,166 - tsla_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 09:57:23,170 - tsla_analyzer - INFO - Inserted new performance data for tsla on 2024-10-26
+2024-10-26 09:57:23,171 - tsla_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 09:57:23,171 - tsla_analyzer - INFO - Skipping future date for tsla: 2024-10-27
+2024-10-26 09:57:23,171 - tsla_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 09:57:23,171 - tsla_analyzer - INFO - Performance data migration and update completed
+2024-10-26 09:57:23,347 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-26 09:57:23,401 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:57:23,405 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:57:23,405 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 09:57:23,406 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:57:23,406 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 09:57:23,406 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:57:23,406 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 09:57:23,410 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 09:57:23,410 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 09:57:23,410 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-26 09:57:23,688 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-26 09:57:23,688 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 09:57:23,812 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 09:57:23,812 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 09:57:23,885 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 09:57:23,886 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 09:57:23,970 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-26 09:57:23,994 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-26 09:57:23,994 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 09:57:24,075 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 09:57:24,076 - AIStockAdvisor - ERROR - Error analyzing stock tsla: DataFrame index must be unique for orient='columns'.
+2024-10-26 10:03:56,460 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-26 10:03:56,461 - tsla_analyzer - INFO - Current OTP: 439846
+2024-10-26 10:03:56,599 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 10:03:56,630 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 10:03:56,631 - tsla_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 10:03:56,636 - tsla_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 10:03:56,636 - tsla_analyzer - INFO - Skipping future date for tsla: 2024-10-27
+2024-10-26 10:03:56,636 - tsla_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 10:03:56,636 - tsla_analyzer - INFO - Performance data migration and update completed
+2024-10-26 10:03:56,839 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-26 10:03:56,892 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 10:03:56,898 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:03:56,898 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 10:03:56,900 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:03:56,900 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 10:03:56,900 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:03:56,900 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:03:56,903 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 10:03:56,903 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 10:03:56,903 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-26 10:03:57,190 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-26 10:03:57,191 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 10:03:57,473 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 10:03:57,474 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 10:03:57,551 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 10:03:57,552 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 10:03:57,666 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-26 10:03:57,688 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-26 10:03:57,688 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 10:03:57,758 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 10:03:57,770 - tsla_analyzer - INFO - Token counts:
+                    System prompt: 8
+                    Input data: 13185
+                    YouTube transcript: 1970
+                    Total: 15163
+                
+2024-10-26 10:03:57,770 - tsla_analyzer - INFO - Sending request to OpenAI
+2024-10-26 10:04:00,258 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 10:04:00,265 - tsla_analyzer - INFO - Received response from OpenAI
+2024-10-26 10:04:00,266 - tsla_analyzer - INFO - Translating text to ko
+2024-10-26 10:04:00,981 - tsla_analyzer - INFO - Translation successful
+2024-10-26 10:13:51,361 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-26 10:13:51,361 - tsla_analyzer - INFO - Current OTP: 260935
+2024-10-26 10:13:51,495 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 10:13:51,529 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 10:13:51,529 - tsla_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 10:13:51,535 - tsla_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 10:13:51,535 - tsla_analyzer - INFO - Skipping future date for tsla: 2024-10-27
+2024-10-26 10:13:51,535 - tsla_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 10:13:51,535 - tsla_analyzer - INFO - Performance data migration and update completed
+2024-10-26 10:13:51,710 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-26 10:13:51,762 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 10:13:51,768 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:13:51,768 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 10:13:51,771 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:13:51,771 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 10:13:51,771 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:13:51,771 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 10:13:51,776 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-26 10:13:51,776 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 10:13:51,776 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-26 10:13:52,032 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-26 10:13:52,032 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 10:13:52,161 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 10:13:52,162 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 10:13:52,236 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 10:13:52,238 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 10:13:52,362 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-26 10:13:52,390 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-26 10:13:52,390 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 10:13:52,473 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 10:13:52,490 - tsla_analyzer - INFO - Token counts:
+                    System prompt: 8
+                    Input data: 12301
+                    YouTube transcript: 1970
+                    Total: 14279
+                
+2024-10-26 10:13:52,490 - tsla_analyzer - INFO - Sending request to OpenAI
+2024-10-26 10:13:55,277 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 10:13:55,287 - tsla_analyzer - INFO - Received response from OpenAI
+2024-10-26 10:13:55,287 - tsla_analyzer - INFO - Translating text to ko
+2024-10-26 10:13:56,301 - tsla_analyzer - INFO - Translation successful
