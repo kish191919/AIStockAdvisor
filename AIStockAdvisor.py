@@ -8,6 +8,7 @@ import yfinance as yf
 import pyotp
 import robin_stocks as r
 import fear_and_greed
+
 from youtube_transcript_api import YouTubeTranscriptApi
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -19,6 +20,7 @@ from deep_translator import GoogleTranslator
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from fastapi.encoders import jsonable_encoder
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 
 # Load environment variables and set up logging
@@ -322,16 +324,39 @@ class AIStockAdvisor:
         }
 
     def get_news(self):
-        google_news = self._get_news_from_google()
-        alpha_vantage_news = self._get_news_from_alpha_vantage()
-        robinhood_news = self._get_news_from_robinhood()
-
-        return {
-            "google_news": google_news,
-            "alpha_vantage_news": alpha_vantage_news,
-            "robinhood_news": robinhood_news
+        all_news = {
+            "google_news": [],
+            "alpha_vantage_news": [],
+            "robinhood_news": []
         }
 
+        # Google News
+        try:
+            google_news = self._get_news_from_google()
+            if google_news:
+                all_news["google_news"] = google_news
+        except Exception as e:
+            self.logger.error(f"Failed to get Google news: {e}")
+
+        # Alpha Vantage News
+        try:
+            alpha_vantage_news = self._get_news_from_alpha_vantage()
+            if alpha_vantage_news:
+                all_news["alpha_vantage_news"] = alpha_vantage_news
+        except Exception as e:
+            self.logger.error(f"Failed to get Alpha Vantage news: {e}")
+
+        # Robinhood News
+        try:
+            robinhood_news = self._get_news_from_robinhood()
+            if robinhood_news:
+                all_news["robinhood_news"] = robinhood_news
+        except Exception as e:
+            self.logger.error(f"Failed to get Robinhood news: {e}")
+
+        return all_news
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
     def _get_news_from_google(self):
         self.logger.info("Fetching news from Google")
         url = "https://www.searchapi.io/api/v1/search"
@@ -341,24 +366,41 @@ class AIStockAdvisor:
             "q": self.stock,
             "num": 5
         }
-        headers = {"Accept": "application/json"}
+        headers = {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+
         try:
-            response = requests.get(url, params=params, headers=headers)
+            # 요청 간 시간 간격 추가
+            time.sleep(2)
+
+            response = self.session.get(url, params=params, headers=headers)
+
+            if response.status_code == 429:
+                self.logger.warning("Rate limit reached, waiting before retry...")
+                time.sleep(5)  # 5초 대기
+                raise Exception("Rate limit reached")
+
             response.raise_for_status()
             data = response.json()
+
             news_items = []
             for result in data.get('organic_results', [])[:5]:
                 news_items.append({
                     "title": result['title'],
-                    "date": result['date'],
+                    "date": result.get('date', ''),
                     "url": result.get('link', ''),
                     "source": 'Google News'
                 })
+
             self.logger.info(f"Retrieved {len(news_items)} news items from Google")
-            return news_items  # 딕셔너리 리스트 직접 반환
+            return news_items
+
         except Exception as e:
             self.logger.error(f"Error during Google News API request: {e}")
-            return []
+            # 에러 발생시 빈 결과 반환하지 않고 예외를 다시 발생시켜 재시도하도록 함
+            raise
 
     def _get_news_from_alpha_vantage(self):
         self.logger.info("Fetching news from Alpha Vantage")

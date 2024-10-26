@@ -46,31 +46,21 @@ class StockAnalysisViewModel: ObservableObject {
                     return
                 }
                 
-                // 받은 JSON 데이터 출력
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Received JSON response: \(jsonString)")
+                // API 에러 응답 체크
+                if let errorResponse = try? JSONDecoder().decode(APIErrorResponse.self, from: data) {
+                    if errorResponse.detail.contains("429") {
+                        self?.error = "Server is currently busy. Please try again later."
+                        return
+                    }
+                    self?.error = "Server error: \(errorResponse.detail)"
+                    return
                 }
                 
                 do {
                     let decoder = JSONDecoder()
                     let response = try decoder.decode(StockAnalysisResponse.self, from: data)
                     self?.result = response
-                    
-                    // 차트 데이터 디버깅
-                    if let chartData = response.chartData {
-                        print("Chart data received:")
-                        print("Daily data count: \(chartData.dailyData.count)")
-                        if let firstDaily = chartData.dailyData.first {
-                            print("First daily data: \(firstDaily)")
-                        }
-                        print("Monthly data count: \(chartData.monthlyData.count)")
-                        if let firstMonthly = chartData.monthlyData.first {
-                            print("First monthly data: \(firstMonthly)")
-                        }
-                        self?.chartData = chartData
-                    } else {
-                        print("No chart data in response")
-                    }
+                    self?.chartData = response.chartData
                 } catch {
                     self?.error = "Failed to decode response: \(error.localizedDescription)"
                     print("Decoding error details: \(error)")
@@ -78,4 +68,9 @@ class StockAnalysisViewModel: ObservableObject {
             }
         }.resume()
     }
+}
+
+// API 에러 응답을 위한 새로운 모델
+struct APIErrorResponse: Codable {
+    let detail: String
 }
