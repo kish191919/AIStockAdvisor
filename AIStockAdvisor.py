@@ -8,7 +8,7 @@ import yfinance as yf
 import pyotp
 import robin_stocks as r
 import fear_and_greed
-
+import time
 from youtube_transcript_api import YouTubeTranscriptApi
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -21,6 +21,11 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from fastapi.encoders import jsonable_encoder
 from tenacity import retry, stop_after_attempt, wait_exponential
+from transformers import GPT2TokenizerFast
+
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
 
 
 # Load environment variables and set up logging
@@ -34,11 +39,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.ssl_ import create_urllib3_context
-
 
 class CustomHttpAdapter(HTTPAdapter):
     def __init__(self, *args, **kwargs):
@@ -95,6 +95,10 @@ class AIStockAdvisor:
         self.performance_db_connection = self._setup_database('ai_stock_performance.db')
         self._migrate_and_update_performance_data()
         self.session = create_session()
+        self.tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+    def count_tokens(self, text: str) -> int:
+        return len(self.tokenizer.encode(text))
 
     def _get_login(self):
         try:
@@ -128,10 +132,10 @@ class AIStockAdvisor:
     def get_chart_data(self):
         self.logger.info(f"Fetching chart data for {self.stock}")
         monthly_historicals = r.robinhood.stocks.get_stock_historicals(
-            self.stock, interval="day", span="3month", bounds="regular"
+            self.stock, interval="day", span="month", bounds="regular"
         )
         daily_historicals = r.robinhood.stocks.get_stock_historicals(
-            self.stock, interval="5minute", span="day", bounds="regular"
+            self.stock, interval="10minute", span="day", bounds="regular"
         )
         monthly_df = self._process_df(monthly_historicals)
         daily_df = self._process_df(daily_historicals)
@@ -294,7 +298,7 @@ class AIStockAdvisor:
                 logger.error(f"Close price column not found. Available columns: {df.columns.tolist()}")
                 return df
 
-            windows = [10, 20, 60, 120]
+            windows = [10, 20]
             for window in windows:
                 df[f'MA_{window}'] = df[close_column].rolling(window=window).mean()
             return df
@@ -324,39 +328,16 @@ class AIStockAdvisor:
         }
 
     def get_news(self):
-        all_news = {
-            "google_news": [],
-            "alpha_vantage_news": [],
-            "robinhood_news": []
+        google_news = self._get_news_from_google()
+        alpha_vantage_news = self._get_news_from_alpha_vantage()
+        robinhood_news = self._get_news_from_robinhood()
+
+        return {
+            "google_news": google_news,
+            "alpha_vantage_news": alpha_vantage_news,
+            "robinhood_news": robinhood_news
         }
 
-        # Google News
-        try:
-            google_news = self._get_news_from_google()
-            if google_news:
-                all_news["google_news"] = google_news
-        except Exception as e:
-            self.logger.error(f"Failed to get Google news: {e}")
-
-        # Alpha Vantage News
-        try:
-            alpha_vantage_news = self._get_news_from_alpha_vantage()
-            if alpha_vantage_news:
-                all_news["alpha_vantage_news"] = alpha_vantage_news
-        except Exception as e:
-            self.logger.error(f"Failed to get Alpha Vantage news: {e}")
-
-        # Robinhood News
-        try:
-            robinhood_news = self._get_news_from_robinhood()
-            if robinhood_news:
-                all_news["robinhood_news"] = robinhood_news
-        except Exception as e:
-            self.logger.error(f"Failed to get Robinhood news: {e}")
-
-        return all_news
-
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
     def _get_news_from_google(self):
         self.logger.info("Fetching news from Google")
         url = "https://www.searchapi.io/api/v1/search"
@@ -366,41 +347,24 @@ class AIStockAdvisor:
             "q": self.stock,
             "num": 5
         }
-        headers = {
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-        }
-
+        headers = {"Accept": "application/json"}
         try:
-            # 요청 간 시간 간격 추가
-            time.sleep(2)
-
-            response = self.session.get(url, params=params, headers=headers)
-
-            if response.status_code == 429:
-                self.logger.warning("Rate limit reached, waiting before retry...")
-                time.sleep(5)  # 5초 대기
-                raise Exception("Rate limit reached")
-
+            response = requests.get(url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
-
             news_items = []
             for result in data.get('organic_results', [])[:5]:
                 news_items.append({
                     "title": result['title'],
-                    "date": result.get('date', ''),
+                    "date": result['date'],
                     "url": result.get('link', ''),
                     "source": 'Google News'
                 })
-
             self.logger.info(f"Retrieved {len(news_items)} news items from Google")
-            return news_items
-
+            return news_items  # 딕셔너리 리스트 직접 반환
         except Exception as e:
             self.logger.error(f"Error during Google News API request: {e}")
-            # 에러 발생시 빈 결과 반환하지 않고 예외를 다시 발생시켜 재시도하도록 함
-            raise
+            return []
 
     def _get_news_from_alpha_vantage(self):
         self.logger.info("Fetching news from Alpha Vantage")
@@ -631,6 +595,56 @@ class AIStockAdvisor:
         fgi = self.get_fear_and_greed_index()
         current_price = self.get_current_price()
         vix_index = self.get_vix_index()
+
+        # 데이터 준비
+        input_data = json.dumps({
+            "stock": self.stock,
+            "monthly_data": monthly_df.to_json(),
+            "daily_data": daily_df.to_json(),
+            "fear_and_greed_index": fgi,
+            "vix_index": vix_index,
+            "news": news
+        })
+
+        # 토큰 수 계산 및 로깅
+        system_prompt = f"""You are an expert in Stock investing..."""  # 기존 시스템 프롬프트
+
+        system_tokens = self.count_tokens(system_prompt)
+        input_tokens = self.count_tokens(input_data)
+        youtube_tokens = self.count_tokens(youtube_transcript)
+
+        self.logger.info(f"""Token counts:
+                    System prompt: {system_tokens}
+                    Input data: {input_tokens}
+                    YouTube transcript: {youtube_tokens}
+                    Total: {system_tokens + input_tokens + youtube_tokens}
+                """)
+
+        # 토큰 수가 너무 많으면 데이터 줄이기
+        if (system_tokens + input_tokens + youtube_tokens) > 25000:  # 여유 있게 설정
+            # 데이터 축소
+            daily_df = daily_df.tail(50)  # 최근 50개 데이터만 사용
+
+            # 뉴스 개수 제한
+            news = {
+                "google_news": news["google_news"][:3],
+                "alpha_vantage_news": news["alpha_vantage_news"][:3],
+                "robinhood_news": news["robinhood_news"][:3]
+            }
+
+            # 다시 데이터 준비
+            input_data = json.dumps({
+                "stock": self.stock,
+                "monthly_data": monthly_df.to_json(),
+                "daily_data": daily_df.to_json(),
+                "fear_and_greed_index": fgi,
+                "vix_index": vix_index,
+                "news": news
+            })
+
+            # 축소된 데이터의 토큰 수 다시 확인
+            input_tokens = self.count_tokens(input_data)
+            self.logger.info(f"Reduced input tokens: {input_tokens}")
 
         if current_price is None:
             self.logger.error("Failed to get current price. Aborting analysis.")
