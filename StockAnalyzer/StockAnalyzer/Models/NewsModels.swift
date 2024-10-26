@@ -3,12 +3,12 @@ import Foundation
 
 // MARK: - News Models
 struct StockNewsData: Decodable {
-    let googleNews: [StockNewsItem]
+    let yahooFinanceNews: [StockNewsItem]
     let alphaVantageNews: [StockNewsItem]
     let robinhoodNews: [StockNewsItem]
     
     enum CodingKeys: String, CodingKey {
-        case googleNews = "google_news"
+        case yahooFinanceNews = "yahoo_finance_news"
         case alphaVantageNews = "alpha_vantage_news"
         case robinhoodNews = "robinhood_news"
     }

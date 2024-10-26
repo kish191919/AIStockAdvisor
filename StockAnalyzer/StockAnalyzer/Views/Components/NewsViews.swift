@@ -14,10 +14,10 @@ struct NewsListView: View {
                 .font(.title2)
                 .padding(.horizontal)
             
-            if !news.googleNews.isEmpty {
+            if !news.yahooFinanceNews.isEmpty {
                 NewsSourceSection(
-                    title: "Google News",
-                    items: news.googleNews,
+                    title: "Yahoo Finance News",
+                    items: news.yahooFinanceNews,
                     selectedURL: $selectedURL,
                     showingSafari: $showingSafari
                 )
@@ -125,9 +125,9 @@ struct SafariView: UIViewControllerRepresentable {
 struct NewsViews_Previews: PreviewProvider {
     static var previews: some View {
         NewsListView(news: StockNewsData(
-            googleNews: [
+            yahooFinanceNews: [
                 StockNewsItem(
-                    title: "Sample Google News 1",
+                    title: "Sample Yahoo Finance News",
                     date: "2024-01-01",
                     published_at: nil,
                     pubDate: nil,
