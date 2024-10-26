@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
-// ViewModels/StockAnalysisViewModel.swift 수정
+// ViewModels/StockAnalysisViewModel.swift
 class StockAnalysisViewModel: ObservableObject {
     @Published var result: StockAnalysisResponse?
     @Published var isLoading = false

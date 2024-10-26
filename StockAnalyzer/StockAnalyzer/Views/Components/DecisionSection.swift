@@ -3,7 +3,7 @@
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
-// DecisionSection.swift 수정
+// Views/Components/DecisionSection.swift
 struct DecisionSection: View {
     let result: StockAnalysisResponse
     

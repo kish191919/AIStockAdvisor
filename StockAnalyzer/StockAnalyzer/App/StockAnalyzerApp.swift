@@ -1,9 +1,5 @@
-//
-//  StockAnalyzerApp.swift
-//  StockAnalyzer
-//
-//  Created by sunghwan ki on 10/25/24.
-//
+
+//  App/StockAnalyzerApp.swift
 
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요

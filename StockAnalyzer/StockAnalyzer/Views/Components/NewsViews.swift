@@ -1,4 +1,4 @@
-// Views/Components/NewsViews.swift
+//Views/Components/NewsViews.swift
 import SwiftUI
 import SafariServices
 
@@ -129,13 +129,6 @@ struct NewsViews_Previews: PreviewProvider {
                 StockNewsItem(
                     title: "Sample Google News 1",
                     date: "2024-01-01",
-                    published_at: nil,
-                    pubDate: nil,
-                    url: "https://example.com"
-                ),
-                StockNewsItem(
-                    title: "Sample Google News 2",
-                    date: "2024-01-02",
                     published_at: nil,
                     pubDate: nil,
                     url: "https://example.com"

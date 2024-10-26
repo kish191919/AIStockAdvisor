@@ -1,5 +1,3 @@
-
-
 // Models/ChartDataModels.swift
 import SwiftUI
 import Charts

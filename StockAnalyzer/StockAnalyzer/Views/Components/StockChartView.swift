@@ -1,4 +1,4 @@
-// Views/Components/StockChartView.swift
+
 // Views/Components/StockChartView.swift
 import SwiftUI
 import Charts
