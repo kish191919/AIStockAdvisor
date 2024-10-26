@@ -1,9 +1,4 @@
-//
-//  MarketIndicatorsSection.swift
-//  StockAnalyzer
-//
-//  Created by sunghwan ki on 10/25/24.
-//
+
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
@@ -15,7 +10,7 @@ struct MarketIndicatorsSection: View {
             Text("Market Indicators")
                 .font(.headline)
             
-            if let vix = result.vixIndex {  // vix_index -> vixIndex
+            if let vix = result.vixIndex {
                 HStack {
                     Text("VIX Index")
                     Spacer()
@@ -26,7 +21,7 @@ struct MarketIndicatorsSection: View {
             HStack {
                 Text("Fear & Greed Index")
                 Spacer()
-                Text(String(format: "%.1f", result.fearGreedIndex.value))  // Int -> Double로 형식 변경
+                Text(String(format: "%.1f", result.fearGreedIndex.value))
             }
             
             Text(result.fearGreedIndex.description)

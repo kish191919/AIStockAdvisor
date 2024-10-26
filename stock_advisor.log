@@ -66,3 +66,114 @@
 2024-10-25 11:44:31,847 - nvda_analyzer - INFO - Received response from OpenAI
 2024-10-25 11:44:31,847 - nvda_analyzer - INFO - Translating text to ko
 2024-10-25 11:44:36,143 - nvda_analyzer - INFO - Translation successful
+2024-10-25 23:56:29,357 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-25 23:56:29,358 - nvda_analyzer - INFO - Current OTP: 526319
+2024-10-25 23:56:29,557 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-25 23:56:29,591 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-25 23:56:29,592 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-25 23:56:29,602 - nvda_analyzer - INFO - Skipping future date for nvda: 2024-10-26
+2024-10-25 23:56:29,602 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-25 23:56:29,602 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-25 23:56:29,603 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-25 23:56:29,653 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-25 23:56:29,659 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-25 23:56:29,660 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-25 23:56:29,661 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-25 23:56:29,661 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-25 23:56:29,661 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-25 23:56:29,661 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-25 23:56:29,667 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60', 'MA_120']
+2024-10-25 23:56:29,667 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-25 23:56:29,667 - nvda_analyzer - INFO - Fetching news from Google
+2024-10-25 23:56:30,031 - nvda_analyzer - ERROR - Error during Google News API request: 429 Client Error: Too Many Requests for url: https://www.searchapi.io/api/v1/search?api_key=b8EChC8n7pyLBHEdKjHb6K6N&engine=google_news&q=nvda&num=5
+2024-10-25 23:56:30,032 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-25 23:56:30,240 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-25 23:56:30,241 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-25 23:56:30,309 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-25 23:56:30,311 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-25 23:56:30,397 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-25 23:56:30,496 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-25 23:56:30,496 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-25 23:56:31,120 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-25 23:56:31,120 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-25 23:56:35,884 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-25 23:56:35,893 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-25 23:56:35,893 - nvda_analyzer - INFO - Translating text to ko
+2024-10-25 23:56:36,963 - nvda_analyzer - INFO - Translation successful
+2024-10-25 23:56:36,977 - AIStockAdvisor - ERROR - Error analyzing stock nvda: 2 validation errors for StockAnalysisResponse
+monthly_df
+  Field required [type=missing, input_value={'decision': 'BUY', 'perc...20': np.float64(nan)}]}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.9/v/missing
+daily_df
+  Field required [type=missing, input_value={'decision': 'BUY', 'perc...20': np.float64(nan)}]}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.9/v/missing
+2024-10-26 00:02:19,974 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-26 00:02:19,974 - nvda_analyzer - INFO - Current OTP: 618470
+2024-10-26 00:02:20,184 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 00:02:20,215 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 00:02:20,216 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 00:02:20,451 - nvda_analyzer - INFO - Updated actual price for nvda. Original next_date: 2024-10-26, Updated next_date: 2024-10-26, Price: 141.54, Difference: -2.40, Error percentage: 1.70%
+2024-10-26 00:02:20,451 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 00:02:20,452 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-26 00:02:20,452 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-26 00:02:20,506 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 00:02:20,508 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:02:20,509 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 00:02:20,510 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:02:20,510 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 00:02:20,510 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:02:20,510 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:02:20,514 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60', 'MA_120']
+2024-10-26 00:02:20,514 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 00:02:20,514 - nvda_analyzer - INFO - Fetching news from Google
+2024-10-26 00:02:20,780 - nvda_analyzer - ERROR - Error during Google News API request: 429 Client Error: Too Many Requests for url: https://www.searchapi.io/api/v1/search?api_key=b8EChC8n7pyLBHEdKjHb6K6N&engine=google_news&q=nvda&num=5
+2024-10-26 00:02:20,781 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 00:02:21,035 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 00:02:21,036 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 00:02:21,103 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 00:02:21,105 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 00:02:21,271 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-26 00:02:21,310 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-26 00:02:21,310 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 00:02:21,381 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 00:02:21,381 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-26 00:02:24,404 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 00:02:24,411 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-26 00:02:24,411 - nvda_analyzer - INFO - Translating text to ko
+2024-10-26 00:02:25,540 - nvda_analyzer - INFO - Translation successful
+2024-10-26 00:02:25,545 - AIStockAdvisor - ERROR - Unhandled exception: Unable to serialize unknown type: <class 'pandas.core.frame.DataFrame'>
+2024-10-26 00:06:10,140 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-26 00:06:10,141 - nvda_analyzer - INFO - Current OTP: 320523
+2024-10-26 00:06:10,237 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-26 00:06:10,267 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-26 00:06:10,267 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-26 00:06:10,272 - nvda_analyzer - INFO - Inserted new performance data for nvda on 2024-10-26
+2024-10-26 00:06:10,272 - nvda_analyzer - INFO - Skipping future date for nvda: 2024-10-27
+2024-10-26 00:06:10,272 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-26 00:06:10,272 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-26 00:06:10,273 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-26 00:06:10,394 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 00:06:10,400 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:06:10,401 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-26 00:06:10,403 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:06:10,404 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-26 00:06:10,404 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:06:10,404 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-26 00:06:10,412 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60', 'MA_120']
+2024-10-26 00:06:10,413 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-26 00:06:10,413 - nvda_analyzer - INFO - Fetching news from Google
+2024-10-26 00:06:10,950 - nvda_analyzer - ERROR - Error during Google News API request: 429 Client Error: Too Many Requests for url: https://www.searchapi.io/api/v1/search?api_key=b8EChC8n7pyLBHEdKjHb6K6N&engine=google_news&q=nvda&num=5
+2024-10-26 00:06:10,951 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-26 00:06:11,108 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-26 00:06:11,109 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-26 00:06:11,181 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-26 00:06:11,183 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-26 00:06:11,263 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-26 00:06:11,287 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-26 00:06:11,287 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-26 00:06:11,570 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-26 00:06:11,570 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-26 00:06:16,139 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-26 00:06:16,146 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-26 00:06:16,146 - nvda_analyzer - INFO - Translating text to ko
+2024-10-26 00:06:16,761 - nvda_analyzer - INFO - Translation successful

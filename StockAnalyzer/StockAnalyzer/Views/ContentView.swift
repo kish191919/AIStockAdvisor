@@ -1,12 +1,8 @@
-//
-//  ContentView.swift
-//  StockAnalyzer
-//
-//  Created by sunghwan ki on 10/25/24.
-// Views/ContentView.swift
 import SwiftUI
+import Charts
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// Views/ContentView.swift
 struct ContentView: View {
     @StateObject private var viewModel = StockAnalysisViewModel()
     @State private var stockSymbol = ""
@@ -50,21 +46,39 @@ struct ContentView: View {
                 .padding()
                 
                 // Results Section
-                if viewModel.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(1.5)
-                } else if let error = viewModel.error {
-                    ErrorView(message: error)
-                } else if let result = viewModel.result {
-                    ScrollView {
-                        ResultView(result: result)
+                ScrollView {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .scaleEffect(1.5)
+                    } else if let error = viewModel.error {
+                        ErrorView(message: error)
+                    } else if let result = viewModel.result {
+                        VStack(spacing: 20) {
+                            // Decision and Price Section
+                            ResultView(result: result)
+                            
+                            // Chart Section
+                            if let chartData = viewModel.chartData {
+                                StockChartView(chartData: chartData)
+                            }
+                            
+                            // News Section - news는 이미 StockAnalysisResponse 내부에 있으므로
+                            // 별도의 옵셔널 체크가 필요하지 않음
+                            NewsListView(news: result.news)
+                        }
+                        .padding()
                     }
                 }
-                
-                Spacer()
             }
             .navigationTitle("Stock Analyzer")
         }
+    }
+}
+
+// PreviewProvider 추가
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }

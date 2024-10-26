@@ -16,6 +16,10 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from openai import OpenAI
 from deep_translator import GoogleTranslator
+from pydantic import BaseModel
+from typing import Optional, Dict, Any, List
+from fastapi.encoders import jsonable_encoder
+
 
 # Load environment variables and set up logging
 load_dotenv()
@@ -32,6 +36,7 @@ logger = logging.getLogger(__name__)
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
+
 
 class CustomHttpAdapter(HTTPAdapter):
     def __init__(self, *args, **kwargs):
@@ -50,6 +55,7 @@ class CustomHttpAdapter(HTTPAdapter):
         kwargs['ssl_context'] = self.ssl_context
         return super().proxy_manager_for(*args, **kwargs)
 
+
 def create_session():
     session = requests.Session()
     adapter = CustomHttpAdapter()
@@ -66,12 +72,14 @@ class Config:
     ALPHA_VANTAGE_API_KEY = os.getenv("Alpha_Vantage_API_KEY")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+
 # Trading decision model
 class TradingDecision(BaseModel):
     decision: str
     percentage: int
     reason: str
     expected_next_day_price: float
+
 
 # AI Stock Advisor System class
 class AIStockAdvisor:
@@ -85,7 +93,6 @@ class AIStockAdvisor:
         self.performance_db_connection = self._setup_database('ai_stock_performance.db')
         self._migrate_and_update_performance_data()
         self.session = create_session()
-
 
     def _get_login(self):
         try:
@@ -547,7 +554,7 @@ class AIStockAdvisor:
                         next_date = ?
                     WHERE stock = ? AND date = ?
                     """, (
-                    actual_price, price_difference, error_percentage, check_date.strftime('%Y-%m-%d'), stock, date))
+                        actual_price, price_difference, error_percentage, check_date.strftime('%Y-%m-%d'), stock, date))
                     self.logger.info(
                         f"Updated actual price for {stock}. Original next_date: {next_date}, "
                         f"Updated next_date: {check_date}, Price: {actual_price:.2f}, "
@@ -662,7 +669,7 @@ class AIStockAdvisor:
             'VIX_INDEX': vix_index
         })
 
-        return result, reason_translated, news, fgi, current_price, vix_index
+        return result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df
 
 
 # FastAPI 앱 생성
@@ -674,6 +681,10 @@ class StockAnalysisRequest(BaseModel):
     symbol: str
     language: str = "en"
 
+class DataFrameModel(BaseModel):
+    index: List[str]
+    columns: List[str]
+    data: List[List[Any]]
 
 # Response 모델
 class StockAnalysisResponse(BaseModel):
@@ -685,7 +696,31 @@ class StockAnalysisResponse(BaseModel):
     vix_index: Optional[float]
     fear_greed_index: Dict[str, Any]
     news: Dict[str, Any]
+    monthly_df: Optional[DataFrameModel] = None
+    daily_df: Optional[DataFrameModel] = None
 
+
+def serialize_dataframe(df: pd.DataFrame) -> Optional[DataFrameModel]:
+    if df is None:
+        return None
+
+    return DataFrameModel(
+        index=[str(idx) for idx in df.index],
+        columns=df.columns.tolist(),
+        data=df.values.tolist()
+    )
+
+# 클라이언트 측에서 DataFrame을 재구성하기 위한 함수
+def reconstruct_dataframe(df_model: DataFrameModel) -> pd.DataFrame:
+    if df_model is None:
+        return None
+
+    df = pd.DataFrame(
+        data=df_model.data,
+        index=df_model.index,
+        columns=df_model.columns
+    )
+    return df
 
 @app.get("/")
 async def root():
@@ -695,24 +730,21 @@ async def root():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 
+# API 엔드포인트 핸들러 수정
 @app.post("/api/analyze", response_model=StockAnalysisResponse)
 async def analyze_stock(request: StockAnalysisRequest):
-    """
-    주식 분석을 실행하고 결과를 반환하는 엔드포인트
-    """
     try:
         logger.info(f"Analyzing stock {request.symbol}")
-
-        # AIStockAdvisor 인스턴스 생성
         advisor = AIStockAdvisor(request.symbol, request.language)
 
         # 분석 실행
-        result, reason_translated, news, fgi, current_price, vix_index = advisor.ai_stock_analysis()
+        result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df = advisor.ai_stock_analysis()
 
-        if not result:
-            raise HTTPException(status_code=404, detail="Analysis failed")
+        # DataFrame 직렬화
+        monthly_df_serialized = serialize_dataframe(monthly_df)
+        daily_df_serialized = serialize_dataframe(daily_df)
 
-        return StockAnalysisResponse(
+        response = StockAnalysisResponse(
             decision=result.decision,
             percentage=result.percentage,
             reason=reason_translated,
@@ -720,98 +752,15 @@ async def analyze_stock(request: StockAnalysisRequest):
             expected_next_day_price=result.expected_next_day_price,
             vix_index=vix_index,
             fear_greed_index=fgi,
-            news=news
+            news=news,
+            monthly_df=monthly_df_serialized,
+            daily_df=daily_df_serialized
         )
+        return response
 
     except Exception as e:
         logger.error(f"Error analyzing stock {request.symbol}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-# 로그 확인을 위한 코드 수정
-@app.get("/api/history/{symbol}")
-async def get_stock_history(symbol: str):
-    """
-    주식의 과거 데이터를 제공하는 엔드포인트
-    """
-    try:
-        # Robinhood 로그인
-        totp = pyotp.TOTP(Config.ROBINHOOD_TOTP_CODE).now()
-        login = r.robinhood.login(
-            Config.ROBINHOOD_USERNAME,
-            Config.ROBINHOOD_PASSWORD,
-            mfa_code=totp
-        )
-
-        # 데이터 가져오기
-        historicals = r.robinhood.stocks.get_stock_historicals(
-            symbol,
-            interval="day",
-            span="3month",
-            bounds="regular"
-        )
-
-        if not historicals:
-            return {
-                "status": "error",
-                "message": "No data available",
-                "symbol": symbol
-            }
-
-        # 데이터프레임 생성
-        df = pd.DataFrame(historicals)
-
-        # 기본 필드만 처리
-        required_fields = ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume']
-        available_fields = [field for field in required_fields if field in df.columns]
-
-        if not available_fields:
-            return {
-                "status": "error",
-                "message": "Required fields not found",
-                "available_fields": list(df.columns)
-            }
-
-        df = df[available_fields].copy()
-
-        # 컬럼 이름 변경
-        column_mapping = {
-            'begins_at': 'date',
-            'open_price': 'Open',
-            'close_price': 'Close',
-            'high_price': 'High',
-            'low_price': 'Low',
-            'volume': 'Volume'
-        }
-        df.rename(columns=column_mapping, inplace=True)
-
-        # 날짜 처리
-        df['date'] = pd.to_datetime(df['date'])
-
-        # 숫자형 변환
-        for col in ['Open', 'Close', 'High', 'Low']:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-        df['Volume'] = pd.to_numeric(df['Volume'], errors='coerce').fillna(0).astype(int)
-
-        return {
-            "status": "success",
-            "data": df.to_dict(orient="records"),
-            "metadata": {
-                "symbol": symbol,
-                "records": len(df),
-                "columns": list(df.columns),
-                "start_date": df['date'].min().isoformat() if not df.empty else None,
-                "end_date": df['date'].max().isoformat() if not df.empty else None
-            }
-        }
-
-    except Exception as e:
-        return {
-            "status": "error",
-            "error_message": str(e),
-            "error_type": type(e).__name__,
-            "symbol": symbol
-        }
 
 
 # 에러 핸들러
@@ -827,11 +776,9 @@ async def general_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
 
-
     uvicorn.run(
         "AIStockAdvisor:app",  # 파일명:app_변수명
         host="0.0.0.0",
         port=8000,
-        reload=False,
-        workers=4
+        reload=False
     )

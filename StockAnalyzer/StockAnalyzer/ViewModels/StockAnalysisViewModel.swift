@@ -1,17 +1,13 @@
-//
-//  StockAnalysisViewModel.swift
-//  StockAnalyzer
-//
-//  Created by sunghwan ki on 10/25/24.
-//
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
 // ViewModels/StockAnalysisViewModel.swift 수정
+
 class StockAnalysisViewModel: ObservableObject {
     @Published var result: StockAnalysisResponse?
     @Published var isLoading = false
     @Published var error: String?
+    @Published var chartData: ChartData?
     
     func analyzeStock(symbol: String, language: String) {
         isLoading = true
@@ -20,8 +16,10 @@ class StockAnalysisViewModel: ObservableObject {
         let request = StockAnalysisRequest(symbol: symbol, language: language)
         
         guard let url = URL(string: "https://aistockadvisor.net/api/analyze") else {
-            error = "Invalid URL"
-            isLoading = false
+            DispatchQueue.main.async {
+                self.error = "Invalid URL"
+                self.isLoading = false
+            }
             return
         }
         
@@ -32,40 +30,48 @@ class StockAnalysisViewModel: ObservableObject {
         do {
             urlRequest.httpBody = try JSONEncoder().encode(request)
         } catch {
-            self.error = "Failed to encode request: \(error.localizedDescription)"
-            isLoading = false
+            DispatchQueue.main.async {
+                self.error = "Failed to encode request: \(error.localizedDescription)"
+                self.isLoading = false
+            }
             return
         }
         
-        URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+        let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+            guard let self = self else { return }
+            
             DispatchQueue.main.async {
-                self?.isLoading = false
+                self.isLoading = false
                 
                 if let error = error {
-                    self?.error = "Network error: \(error.localizedDescription)"
+                    self.error = "Network error: \(error.localizedDescription)"
                     return
                 }
                 
                 guard let data = data else {
-                    self?.error = "No data received"
+                    self.error = "No data received"
                     return
                 }
                 
-                // 디버깅을 위해 JSON 응답 출력
+                // Print response for debugging
                 if let jsonString = String(data: data, encoding: .utf8) {
                     print("Received JSON response: \(jsonString)")
                 }
                 
                 do {
                     let decoder = JSONDecoder()
-                    // decoder.keyDecodingStrategy = .convertFromSnakeCase  // 이 줄 제거
-                    let result = try decoder.decode(StockAnalysisResponse.self, from: data)
-                    self?.result = result
+                    let response = try decoder.decode(StockAnalysisResponse.self, from: data)
+                    self.result = response
+                    if let chartData = response.chartData {
+                        self.chartData = chartData
+                    }
                 } catch {
-                    self?.error = "Failed to decode response: \(error.localizedDescription)"
+                    self.error = "Failed to decode response: \(error.localizedDescription)"
                     print("Decoding error details: \(error)")
                 }
             }
-        }.resume()
+        }
+        
+        task.resume()
     }
 }

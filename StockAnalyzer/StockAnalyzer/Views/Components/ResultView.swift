@@ -1,12 +1,8 @@
-//
-//  ResultView.swift
-//  StockAnalyzer
-//
-//  Created by sunghwan ki on 10/25/24.
-//
+
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// Views/Components/ResultView.swift
 struct ResultView: View {
     let result: StockAnalysisResponse
     
@@ -22,7 +18,7 @@ struct ResultView: View {
             MarketIndicatorsSection(result: result)
             
             // News Section
-            NewsSection(news: result.news)
+            NewsListView(news: result.news)
         }
         .padding()
     }
