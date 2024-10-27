@@ -891,3 +891,111 @@ PCA does not accept missing values encoded as NaN natively. For supervised learn
 2024-10-27 01:40:45,679 - nvda_analyzer - INFO - Received response from OpenAI
 2024-10-27 01:40:45,679 - nvda_analyzer - INFO - Translating text to ko
 2024-10-27 01:40:46,879 - nvda_analyzer - INFO - Translation successful
+2024-10-27 01:46:31,061 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 01:46:31,062 - nvda_analyzer - INFO - Current OTP: 000391
+2024-10-27 01:46:31,193 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:46:31,228 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:46:31,464 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 01:46:31,520 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:46:31,526 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:46:31,526 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:46:31,528 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:46:31,528 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:46:31,528 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:46:31,528 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:46:31,533 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:46:31,533 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:46:31,533 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 01:46:31,815 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:46:31,816 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:46:32,009 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:46:32,010 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:46:32,075 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:46:32,077 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:46:32,178 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 01:46:32,214 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 01:46:32,215 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:46:32,303 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:46:32,322 - nvda_analyzer - INFO - Token counts:
+                    System prompt: 3071
+                    Input data: 5641
+                    YouTube transcript: 1970
+                    Total: 10682
+                
+2024-10-27 01:46:32,322 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-27 01:46:34,195 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 01:46:34,206 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-27 01:46:34,207 - nvda_analyzer - INFO - Translating text to ko
+2024-10-27 01:46:35,684 - nvda_analyzer - INFO - Translation successful
+2024-10-27 01:53:11,690 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-27 01:53:11,691 - tsla_analyzer - INFO - Current OTP: 500164
+2024-10-27 01:53:11,834 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:53:11,863 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:53:12,046 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-27 01:53:12,102 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:53:12,111 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:53:12,111 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:53:12,114 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:53:12,115 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:53:12,115 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:53:12,115 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:53:12,120 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:53:12,120 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:53:12,120 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-27 01:53:12,379 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:53:12,380 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:53:12,587 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:53:12,589 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:53:12,663 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:53:12,665 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:53:12,761 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-27 01:53:12,785 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-27 01:53:12,785 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:53:12,868 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:53:12,886 - tsla_analyzer - INFO - Token counts:
+                    System prompt: 2959
+                    Input data: 5782
+                    YouTube transcript: 1970
+                    Total: 10711
+                
+2024-10-27 01:53:12,886 - tsla_analyzer - INFO - Sending request to OpenAI
+2024-10-27 01:53:14,502 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 01:53:14,513 - tsla_analyzer - INFO - Received response from OpenAI
+2024-10-27 01:53:14,513 - tsla_analyzer - INFO - Translating text to ko
+2024-10-27 01:53:15,792 - tsla_analyzer - INFO - Translation successful
+2024-10-27 01:56:35,104 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-27 01:56:35,105 - tsla_analyzer - INFO - Current OTP: 459386
+2024-10-27 01:56:35,199 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:56:35,227 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:56:35,445 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-27 01:56:35,502 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:56:35,512 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:56:35,512 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:56:35,515 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:56:35,515 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:56:35,515 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:56:35,515 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:56:35,521 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:56:35,521 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:56:35,521 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-27 01:56:35,791 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:56:35,791 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:56:35,905 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:56:35,906 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:56:35,972 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:56:35,974 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:56:36,093 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-27 01:56:36,114 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-27 01:56:36,114 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:56:36,198 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:56:36,220 - tsla_analyzer - INFO - Token counts:
+                    System prompt: 2973
+                    Input data: 5782
+                    YouTube transcript: 1970
+                    Total: 10725
+                
+2024-10-27 01:56:36,220 - tsla_analyzer - INFO - Sending request to OpenAI
+2024-10-27 01:56:38,119 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 01:56:38,130 - tsla_analyzer - INFO - Received response from OpenAI
+2024-10-27 01:56:38,130 - tsla_analyzer - INFO - Translating text to ko
+2024-10-27 01:56:39,524 - tsla_analyzer - INFO - Translation successful

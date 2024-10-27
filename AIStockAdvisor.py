@@ -212,7 +212,7 @@ class AIStockAdvisor:
             self.stock, interval="day", span="month", bounds="regular"
         )
         daily_historicals = r.robinhood.stocks.get_stock_historicals(
-            self.stock, interval="5minute", span="day", bounds="regular"
+            self.stock, interval="10minute", span="day", bounds="regular"
         )
         monthly_df = self._process_df(monthly_historicals, interval_type='monthly')
         daily_df = self._process_df(daily_historicals, interval_type='daily')
@@ -672,14 +672,11 @@ class AIStockAdvisor:
                     The technical indicators have been compressed using PCA while preserving {processed_data['metadata']['monthly_data']['total_variance_preserved']:.3%} of the variance for monthly data 
                     and {processed_data['metadata']['daily_data']['total_variance_preserved']:.3%} for daily data. The original features were: {processed_data['metadata']['description']['monthly_original_features']} for monthly data and {processed_data['metadata']['description']['daily_original_features']} for daily data.
                     Tell me whether to buy, sell, or hold at the moment. Consider the following in your analysis:
-                                - Technical indicators and market data
+                                - Detailed analysis of technical indicators and market data
                                 - Recent news headlines and their potential impact on Stock price
                                 - The Fear and Greed Index and its implications
                                 - VIX INDEX and its implications for market volatility
                                 - Overall market sentiment
-                                - Insights from the YouTube video transcript
-                                - Current stock price: ${current_price}
-                                - Current VIX INDEX: {vix_index}
                     Particularly important is to always refer to the trading strategy to assess the current situation and make trading decisions. The trading strategy is as follows:
                     {strategy}
                     Based on this trading strategy, analyze the current market situation and make a judgment by synthesizing it with the provided data.
@@ -688,11 +685,11 @@ class AIStockAdvisor:
                     1. A decision (BUY, SELL, or HOLD)
                     2. If the decision is 'BUY' or 'SELL', provide an intensity expressed as a percentage ratio (1 to 100).
                        If the decision is 'HOLD', set the percentage to 0.
-                    3. A reason for your decision
+                    3. A reason for your decision (Avoid using the term PCA)
                     4. A prediction for the next day's closing price
                     Ensure that the percentage is an integer between 1 and 100 for buy/sell decisions, and exactly 0 for hold decisions.
                     Your percentage should reflect the strength of your conviction in the decision based on the analyzed data.
-                    The next day's closing price prediction should be a float value."""
+                    The next day's closing price prediction should be a float value. Express all analyzes in as detailed and detailed a manner as possible."""
 
         system_tokens = self.count_tokens(system_prompt)
         input_tokens = self.count_tokens(input_data)
