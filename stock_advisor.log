@@ -677,3 +677,217 @@ daily_df
 2024-10-26 10:13:55,287 - tsla_analyzer - INFO - Received response from OpenAI
 2024-10-26 10:13:55,287 - tsla_analyzer - INFO - Translating text to ko
 2024-10-26 10:13:56,301 - tsla_analyzer - INFO - Translation successful
+2024-10-27 00:03:26,568 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 00:03:26,568 - nvda_analyzer - INFO - Current OTP: 665117
+2024-10-27 00:03:26,717 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 00:03:26,745 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 00:03:26,746 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-27 00:03:27,068 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-27 -> 2024-10-28)
+2024-10-27 00:03:27,873 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-28 -> 2024-10-29) (Yahoo error = "Data doesn't exist for startDate = 1730088000, endDate = 1730174400")
+2024-10-27 00:03:28,448 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-29 -> 2024-10-30) (Yahoo error = "Data doesn't exist for startDate = 1730174400, endDate = 1730260800")
+2024-10-27 00:03:29,021 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-30 -> 2024-10-31) (Yahoo error = "Data doesn't exist for startDate = 1730260800, endDate = 1730347200")
+2024-10-27 00:03:29,662 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-31 -> 2024-11-01) (Yahoo error = "Data doesn't exist for startDate = 1730347200, endDate = 1730433600")
+2024-10-27 00:03:29,662 - nvda_analyzer - WARNING - No data available for nvda within 5 days after 2024-10-27
+2024-10-27 00:03:29,709 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-27 -> 2024-10-28)
+2024-10-27 00:03:30,306 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-28 -> 2024-10-29) (Yahoo error = "Data doesn't exist for startDate = 1730088000, endDate = 1730174400")
+2024-10-27 00:03:30,833 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-29 -> 2024-10-30) (Yahoo error = "Data doesn't exist for startDate = 1730174400, endDate = 1730260800")
+2024-10-27 00:03:31,487 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-30 -> 2024-10-31) (Yahoo error = "Data doesn't exist for startDate = 1730260800, endDate = 1730347200")
+2024-10-27 00:03:32,053 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-31 -> 2024-11-01) (Yahoo error = "Data doesn't exist for startDate = 1730347200, endDate = 1730433600")
+2024-10-27 00:03:32,053 - nvda_analyzer - WARNING - No data available for tsla within 5 days after 2024-10-27
+2024-10-27 00:03:32,053 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-27 00:03:32,053 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-27 00:03:32,231 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 00:03:32,282 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 00:03:32,289 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:03:32,289 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 00:03:32,292 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:03:32,292 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 00:03:32,292 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:03:32,292 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:03:32,298 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-27 00:03:32,298 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 00:03:32,298 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 00:03:32,436 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 00:03:32,436 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 00:03:32,728 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 00:03:32,729 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 00:03:32,801 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 00:03:32,802 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 00:03:32,899 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 00:03:32,925 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 00:03:32,925 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 00:03:32,988 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 00:03:33,005 - AIStockAdvisor - ERROR - Error analyzing stock nvda: Object of type date is not JSON serializable
+2024-10-27 00:22:41,222 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 00:22:41,223 - nvda_analyzer - INFO - Current OTP: 845818
+2024-10-27 00:22:41,366 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 00:22:41,398 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 00:22:41,399 - nvda_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-27 00:22:41,638 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-27 -> 2024-10-28)
+2024-10-27 00:22:42,382 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-28 -> 2024-10-29) (Yahoo error = "Data doesn't exist for startDate = 1730088000, endDate = 1730174400")
+2024-10-27 00:22:42,970 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-29 -> 2024-10-30) (Yahoo error = "Data doesn't exist for startDate = 1730174400, endDate = 1730260800")
+2024-10-27 00:22:43,695 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-30 -> 2024-10-31) (Yahoo error = "Data doesn't exist for startDate = 1730260800, endDate = 1730347200")
+2024-10-27 00:22:44,294 - yfinance - ERROR - $NVDA: possibly delisted; no price data found  (1d 2024-10-31 -> 2024-11-01) (Yahoo error = "Data doesn't exist for startDate = 1730347200, endDate = 1730433600")
+2024-10-27 00:22:44,294 - nvda_analyzer - WARNING - No data available for nvda within 5 days after 2024-10-27
+2024-10-27 00:22:44,343 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-27 -> 2024-10-28)
+2024-10-27 00:22:44,933 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-28 -> 2024-10-29) (Yahoo error = "Data doesn't exist for startDate = 1730088000, endDate = 1730174400")
+2024-10-27 00:22:45,558 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-29 -> 2024-10-30) (Yahoo error = "Data doesn't exist for startDate = 1730174400, endDate = 1730260800")
+2024-10-27 00:22:46,183 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-30 -> 2024-10-31) (Yahoo error = "Data doesn't exist for startDate = 1730260800, endDate = 1730347200")
+2024-10-27 00:22:46,864 - yfinance - ERROR - $TSLA: possibly delisted; no price data found  (1d 2024-10-31 -> 2024-11-01) (Yahoo error = "Data doesn't exist for startDate = 1730347200, endDate = 1730433600")
+2024-10-27 00:22:46,864 - nvda_analyzer - WARNING - No data available for tsla within 5 days after 2024-10-27
+2024-10-27 00:22:46,864 - nvda_analyzer - INFO - Actual stock prices fetched and updated
+2024-10-27 00:22:46,864 - nvda_analyzer - INFO - Performance data migration and update completed
+2024-10-27 00:22:47,035 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 00:22:47,107 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 00:22:47,111 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:22:47,111 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 00:22:47,113 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:22:47,113 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 00:22:47,113 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:22:47,113 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 00:22:47,118 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20']
+2024-10-27 00:22:47,118 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 00:22:47,118 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 00:22:47,255 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 00:22:47,255 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 00:22:47,381 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 00:22:47,381 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 00:22:47,514 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 00:22:47,515 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 00:22:47,608 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 00:22:47,639 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 00:22:47,639 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 00:22:47,700 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 00:22:47,725 - nvda_analyzer - INFO - Token counts:
+                    System prompt: 3265
+                    Input data: 5641
+                    YouTube transcript: 1970
+                    Total: 10876
+                
+2024-10-27 00:22:47,725 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-27 00:22:50,934 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 00:22:50,945 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-27 00:22:50,946 - nvda_analyzer - INFO - Translating text to ko
+2024-10-27 00:22:51,755 - nvda_analyzer - INFO - Translation successful
+2024-10-27 01:32:36,426 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-27 01:32:36,426 - tsla_analyzer - INFO - Current OTP: 902312
+2024-10-27 01:32:36,553 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:32:36,575 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:32:36,576 - tsla_analyzer - INFO - Database ai_stock_performance.db setup completed
+2024-10-27 01:32:36,576 - AIStockAdvisor - ERROR - Error analyzing stock tsla: 'AIStockAdvisor' object has no attribute '_migrate_and_update_performance_data'
+2024-10-27 01:34:17,762 - AIStockAdvisor - INFO - Analyzing stock tsla
+2024-10-27 01:34:17,764 - tsla_analyzer - INFO - Current OTP: 900406
+2024-10-27 01:34:17,859 - tsla_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:34:17,878 - tsla_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:34:18,102 - tsla_analyzer - INFO - Fetching chart data for tsla
+2024-10-27 01:34:18,157 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:34:18,167 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:34:18,168 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:34:18,172 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:34:18,172 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:34:18,172 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:34:18,172 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:34:18,177 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:34:18,177 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:34:18,177 - tsla_analyzer - INFO - Fetching news from Yahoo Finance for tsla
+2024-10-27 01:34:18,474 - tsla_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:34:18,475 - tsla_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:34:18,605 - tsla_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:34:18,606 - tsla_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:34:18,678 - tsla_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:34:18,680 - tsla_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:34:18,772 - tsla_analyzer - INFO - Fetching current price for tsla
+2024-10-27 01:34:18,798 - tsla_analyzer - INFO - Current price for tsla: $267.09
+2024-10-27 01:34:18,798 - tsla_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:34:18,896 - tsla_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:34:18,901 - AIStockAdvisor - ERROR - Error analyzing stock tsla: Input X contains NaN.
+PCA does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2024-10-27 01:36:16,288 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 01:36:16,289 - nvda_analyzer - INFO - Current OTP: 938121
+2024-10-27 01:36:16,435 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:36:16,455 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:36:16,637 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 01:36:16,695 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:36:16,699 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:36:16,699 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:36:16,700 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:36:16,700 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:36:16,700 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:36:16,700 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:36:16,705 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:36:16,705 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:36:16,705 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 01:36:16,979 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:36:16,979 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:36:17,166 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:36:17,166 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:36:17,239 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:36:17,240 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:36:17,327 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 01:36:17,353 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 01:36:17,353 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:36:17,433 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:36:17,437 - AIStockAdvisor - ERROR - Error analyzing stock nvda: Input X contains NaN.
+PCA does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2024-10-27 01:40:02,334 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 01:40:02,335 - nvda_analyzer - INFO - Current OTP: 502254
+2024-10-27 01:40:02,537 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:40:02,569 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:40:02,777 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 01:40:02,832 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:40:02,835 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:02,835 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:40:02,837 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:02,837 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:40:02,837 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:02,837 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:02,841 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:40:02,841 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:40:02,841 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 01:40:03,147 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:40:03,147 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:40:05,302 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:40:05,303 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:40:05,438 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:40:05,439 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:40:05,525 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 01:40:05,551 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 01:40:05,551 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:40:05,636 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:40:05,667 - AIStockAdvisor - ERROR - Error analyzing stock nvda: name 'youtube_transcript' is not defined
+2024-10-27 01:40:42,910 - AIStockAdvisor - INFO - Analyzing stock nvda
+2024-10-27 01:40:42,910 - nvda_analyzer - INFO - Current OTP: 263936
+2024-10-27 01:40:42,983 - nvda_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 01:40:43,010 - nvda_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 01:40:43,076 - nvda_analyzer - INFO - Fetching chart data for nvda
+2024-10-27 01:40:43,128 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:40:43,131 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:43,132 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 01:40:43,133 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:43,133 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 01:40:43,133 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:43,133 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 01:40:43,138 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 01:40:43,138 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 01:40:43,138 - nvda_analyzer - INFO - Fetching news from Yahoo Finance for nvda
+2024-10-27 01:40:43,213 - nvda_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 01:40:43,213 - nvda_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 01:40:43,215 - nvda_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 01:40:43,215 - nvda_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 01:40:43,280 - nvda_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 01:40:43,282 - nvda_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 01:40:43,286 - nvda_analyzer - INFO - Fetching current price for nvda
+2024-10-27 01:40:43,308 - nvda_analyzer - INFO - Current price for nvda: $141.06
+2024-10-27 01:40:43,308 - nvda_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 01:40:43,343 - nvda_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 01:40:43,359 - nvda_analyzer - INFO - Token counts:
+                    System prompt: 3070
+                    Input data: 7958
+                    YouTube transcript: 1970
+                    Total: 12998
+                
+2024-10-27 01:40:43,359 - nvda_analyzer - INFO - Sending request to OpenAI
+2024-10-27 01:40:45,668 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 01:40:45,679 - nvda_analyzer - INFO - Received response from OpenAI
+2024-10-27 01:40:45,679 - nvda_analyzer - INFO - Translating text to ko
+2024-10-27 01:40:46,879 - nvda_analyzer - INFO - Translation successful

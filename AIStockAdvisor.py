@@ -25,6 +25,15 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
 
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import pandas as pd
+
+import json
+from datetime import date, datetime
+
+
 
 # Load environment variables and set up logging
 load_dotenv()
@@ -57,6 +66,103 @@ class TradingDecision(BaseModel):
     expected_next_day_price: float
 
 
+class TechnicalDataProcessor:
+    def __init__(self, variance_ratio_threshold=0.95):
+        self.variance_ratio_threshold = variance_ratio_threshold
+        self.scalers = {}
+        self.pcas = {}
+        self.feature_names = {}
+
+    def _prepare_dataframe(self, df):
+        """
+        Prepare DataFrame by handling missing values and selecting numeric columns
+        """
+        # Select only numeric columns
+        numeric_df = df.select_dtypes(include=[np.number])
+
+        # Drop columns where all values are NaN
+        numeric_df = numeric_df.dropna(axis=1, how='all')
+
+        # Forward fill missing values
+        numeric_df = numeric_df.fillna(method='ffill')
+
+        # Backward fill any remaining missing values
+        numeric_df = numeric_df.fillna(method='bfill')
+
+        # If there are still any NaN values, replace them with 0
+        numeric_df = numeric_df.fillna(0)
+
+        # Drop any columns that still have NaN values (shouldn't happen, but just in case)
+        numeric_df = numeric_df.dropna(axis=1)
+
+        # Ensure we have at least one column
+        if numeric_df.empty or len(numeric_df.columns) == 0:
+            raise ValueError("No valid numeric columns remaining after NaN handling")
+
+        return numeric_df
+
+    # Fit PCA and transform data
+    def fit_transform(self, df, prefix):
+
+        # Prepare data
+        numeric_df = self._prepare_dataframe(df)
+        original_index = numeric_df.index
+
+        # Store feature names
+        self.feature_names[prefix] = numeric_df.columns.tolist()
+
+        # Scale the data
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(numeric_df)
+        self.scalers[prefix] = scaler
+
+        # Apply PCA
+        pca = PCA()
+        transformed_data = pca.fit_transform(scaled_data)
+        self.pcas[prefix] = pca
+
+        # Determine number of components needed
+        cumulative_variance_ratio = np.cumsum(pca.explained_variance_ratio_)
+        n_components = np.argmax(cumulative_variance_ratio >= self.variance_ratio_threshold) + 1
+
+        # Create DataFrame with reduced components
+        columns = [f'PC{i + 1}' for i in range(n_components)]
+        pca_df = pd.DataFrame(
+            transformed_data[:, :n_components],
+            columns=columns,
+            index=original_index
+        )
+
+        # Add variance explained information
+        variance_explained = {
+            f'{prefix}_variance_explained': {
+                'total_variance_preserved': float(cumulative_variance_ratio[n_components - 1]),
+                'n_components': int(n_components),
+                'component_variance_ratios': pca.explained_variance_ratio_[:n_components].tolist()
+            }
+        }
+
+        return pca_df, variance_explained
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    """날짜와 NumPy 타입을 처리할 수 있는 커스텀 JSON 인코더"""
+
+    def default(self, obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if pd.isna(obj):
+            return None
+        return super().default(obj)
+
+
+
 # AI Stock Advisor System class
 class AIStockAdvisor:
     def __init__(self, stock: str, lang='en'):
@@ -66,8 +172,6 @@ class AIStockAdvisor:
         self.login = self._get_login()
         self.openai_client = OpenAI(api_key=Config.OPENAI_API_KEY)
         self.db_connection = self._setup_database('ai_stock_analysis_records.db')
-        self.performance_db_connection = self._setup_database('ai_stock_performance.db')
-        self._migrate_and_update_performance_data()
         self.tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
     def count_tokens(self, text: str) -> int:
@@ -108,17 +212,13 @@ class AIStockAdvisor:
             self.stock, interval="day", span="month", bounds="regular"
         )
         daily_historicals = r.robinhood.stocks.get_stock_historicals(
-            self.stock, interval="10minute", span="day", bounds="regular"
+            self.stock, interval="5minute", span="day", bounds="regular"
         )
         monthly_df = self._process_df(monthly_historicals, interval_type='monthly')
         daily_df = self._process_df(daily_historicals, interval_type='daily')
         return self._add_indicators(monthly_df, daily_df)
 
     def _process_df(self, historicals, interval_type='daily'):
-        """
-        히스토리컬 데이터를 DataFrame으로 변환
-        interval_type: 'daily' 또는 'monthly'
-        """
         try:
             if not historicals:
                 logger.error("No historical data received")
@@ -309,13 +409,57 @@ class AIStockAdvisor:
                 logger.error(f"Close price column not found. Available columns: {df.columns.tolist()}")
                 return df
 
-            windows = [10, 20]
+            windows = [10, 20, 60]
             for window in windows:
                 df[f'MA_{window}'] = df[close_column].rolling(window=window).mean()
             return df
         except Exception as e:
             logger.error(f"Error in _calculate_moving_averages: {str(e)}")
             return df
+
+    def prepare_data_for_openai(self, monthly_df, daily_df):
+        """
+        PCA를 사용하여 기술적 지표 데이터를 처리하고 JSON 직렬화 가능한 형태로 반환
+        """
+        processor = TechnicalDataProcessor(variance_ratio_threshold=0.95)
+
+        # 인덱스를 문자열로 변환
+        monthly_df.index = monthly_df.index.map(str)
+        daily_df.index = daily_df.index.map(str)
+
+        # PCA 처리
+        monthly_pca, monthly_variance = processor.fit_transform(monthly_df, 'monthly')
+        daily_pca, daily_variance = processor.fit_transform(daily_df, 'daily')
+
+        # 데이터프레임을 JSON 직렬화 가능한 형태로 변환
+        monthly_data = {
+            'index': monthly_pca.index.tolist(),
+            'columns': monthly_pca.columns.tolist(),
+            'data': monthly_pca.values.tolist()
+        }
+
+        daily_data = {
+            'index': daily_pca.index.tolist(),
+            'columns': daily_pca.columns.tolist(),
+            'data': daily_pca.values.tolist()
+        }
+
+        metadata = {
+            'monthly_data': monthly_variance['monthly_variance_explained'],
+            'daily_data': daily_variance['daily_variance_explained'],
+            'description': {
+                'monthly_original_features': processor.feature_names['monthly'],
+                'daily_original_features': processor.feature_names['daily']
+            }
+        }
+
+        processed_data = {
+            'monthly_data': monthly_data,
+            'daily_data': daily_data,
+            'metadata': metadata
+        }
+
+        return processed_data, processor
 
     def get_vix_index(self):
         self.logger.info("Fetching VIX INDEX data")
@@ -456,64 +600,10 @@ class AIStockAdvisor:
                 ExpectedPriceDifference REAL
             )
             ''')
-        elif db_name == 'ai_stock_performance.db':
-            cursor.execute('''
-            CREATE TABLE IF NOT EXISTS stock_performance (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                stock TEXT,
-                date DATE,
-                avg_current_price REAL,
-                next_date DATE,
-                avg_expected_next_day_price REAL,
-                actual_next_day_price REAL,
-                price_difference REAL,
-                error_percentage REAL DEFAULT 0,
-                count INTEGER DEFAULT 1
-            )
-            ''')
 
         conn.commit()
         self.logger.info(f"Database {db_name} setup completed")
         return conn
-
-    def _migrate_and_update_performance_data(self):
-        cursor_analysis = self.db_connection.cursor()
-        cursor_performance = self.performance_db_connection.cursor()
-
-        cursor_analysis.execute("""
-        SELECT Stock, DATE(Time) as Date, CurrentPrice, ExpectedNextDayPrice
-        FROM ai_stock_analysis_records
-        """)
-        records = cursor_analysis.fetchall()
-
-        df = pd.DataFrame(records, columns=['Stock', 'Date', 'CurrentPrice', 'ExpectedNextDayPrice'])
-        grouped = df.groupby(['Stock', 'Date'])
-
-        aggregated = grouped.agg({
-            'CurrentPrice': 'mean',
-            'ExpectedNextDayPrice': 'mean',
-            'Stock': 'count'
-        }).rename(columns={'Stock': 'Count'})
-
-        for (stock, date), row in aggregated.iterrows():
-            next_date = (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
-
-            cursor_performance.execute("""
-            SELECT COUNT(*) FROM stock_performance
-            WHERE stock = ? AND date = ?
-            """, (stock, date))
-
-            if cursor_performance.fetchone()[0] == 0:
-                cursor_performance.execute("""
-                INSERT INTO stock_performance
-                (stock, date, next_date, avg_current_price, avg_expected_next_day_price, count)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """, (stock, date, next_date, row['CurrentPrice'], row['ExpectedNextDayPrice'], row['Count']))
-                self.logger.info(f"Inserted new performance data for {stock} on {date}")
-
-        self.performance_db_connection.commit()
-        self._fetch_actual_stock_prices()
-        self.logger.info("Performance data migration and update completed")
 
     def _record_trading_decision(self, decision: Dict[str, Any]):
         time_ = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -538,136 +628,50 @@ class AIStockAdvisor:
         ))
         self.db_connection.commit()
 
-    def _fetch_actual_stock_prices(self):
-        cursor = self.performance_db_connection.cursor()
-
-        cursor.execute("""
-        SELECT DISTINCT stock, date, next_date, avg_expected_next_day_price
-        FROM stock_performance
-        WHERE actual_next_day_price IS NULL
-        """)
-        stocks_to_update = cursor.fetchall()
-
-        for stock, date, next_date, avg_expected_next_day_price in stocks_to_update:
-            next_date = datetime.strptime(next_date, '%Y-%m-%d').date()
-
-            if next_date > datetime.now().date():
-                self.logger.info(f"Skipping future date for {stock}: {next_date}")
-                continue
-
-            try:
-                ticker = yf.Ticker(stock)
-                actual_price = None
-
-                days_to_check = 5
-
-                for i in range(days_to_check):
-                    check_date = next_date + timedelta(days=i)
-                    hist = ticker.history(start=check_date, end=check_date + timedelta(days=1))
-
-                    if not hist.empty:
-                        actual_price = round(hist['Close'].iloc[0], 2)
-                        break
-
-                if actual_price is not None:
-                    price_difference = round(actual_price - avg_expected_next_day_price, 2)
-                    error_percentage = abs(
-                        round((price_difference / actual_price) * 100, 2)) if actual_price != 0 else 0
-
-                    cursor.execute("""
-                    UPDATE stock_performance
-                    SET actual_next_day_price = ?,
-                        price_difference = ?,
-                        error_percentage = ?,
-                        next_date = ?
-                    WHERE stock = ? AND date = ?
-                    """, (
-                        actual_price, price_difference, error_percentage, check_date.strftime('%Y-%m-%d'), stock, date))
-                    self.logger.info(
-                        f"Updated actual price for {stock}. Original next_date: {next_date}, "
-                        f"Updated next_date: {check_date}, Price: {actual_price:.2f}, "
-                        f"Difference: {price_difference:.2f}, Error percentage: {error_percentage:.2f}%")
-                else:
-                    self.logger.warning(
-                        f"No data available for {stock} within {days_to_check} days after {next_date}")
-            except Exception as e:
-                self.logger.error(f"Error fetching data for {stock} starting from {next_date}: {str(e)}")
-
-        self.performance_db_connection.commit()
-        self.logger.info("Actual stock prices fetched and updated")
 
     def ai_stock_analysis(self):
         monthly_df, daily_df = self.get_chart_data()
         news = self.get_news()
         f = open("strategy.txt", "r")
-        youtube_transcript = f.read()
+        strategy = f.read()
         f.close()
 
         fgi = self.get_fear_and_greed_index()
         current_price = self.get_current_price()
         vix_index = self.get_vix_index()
 
-        # 데이터 준비
-        input_data = json.dumps({
-            "stock": self.stock,
-            "monthly_data": monthly_df.to_json(),
-            "daily_data": daily_df.to_json(),
-            "fear_and_greed_index": fgi,
-            "vix_index": vix_index,
-            "news": news
-        })
-
-        # 토큰 수 계산 및 로깅
-        system_prompt = f"""You are an expert in Stock investing..."""  # 기존 시스템 프롬프트
-
-        system_tokens = self.count_tokens(system_prompt)
-        input_tokens = self.count_tokens(input_data)
-        youtube_tokens = self.count_tokens(youtube_transcript)
-
-        self.logger.info(f"""Token counts:
-                    System prompt: {system_tokens}
-                    Input data: {input_tokens}
-                    YouTube transcript: {youtube_tokens}
-                    Total: {system_tokens + input_tokens + youtube_tokens}
-                """)
-
-        # 토큰 수가 너무 많으면 데이터 줄이기
-        if (system_tokens + input_tokens + youtube_tokens) > 25000:  # 여유 있게 설정
-            # 데이터 축소
-            daily_df = daily_df.tail(50)  # 최근 50개 데이터만 사용
-
-            # 뉴스 개수 제한
-            news = {
-                "yahoo_finance_news": news["yahoo_finance_news"][:3],
-                "alpha_vantage_news": news["alpha_vantage_news"][:3],
-                "robinhood_news": news["robinhood_news"][:3]
-            }
-
-            # 다시 데이터 준비
-            input_data = json.dumps({
-                "stock": self.stock,
-                "monthly_data": monthly_df.to_json(),
-                "daily_data": daily_df.to_json(),
-                "fear_and_greed_index": fgi,
-                "vix_index": vix_index,
-                "news": news
-            })
-
-            # 축소된 데이터의 토큰 수 다시 확인
-            input_tokens = self.count_tokens(input_data)
-            self.logger.info(f"Reduced input tokens: {input_tokens}")
-
         if current_price is None:
             self.logger.error("Failed to get current price. Aborting analysis.")
             return None, None, None, None, None, None
 
-        self.logger.info("Sending request to OpenAI")
-        response = self.openai_client.chat.completions.create(
-            model="gpt-4o-2024-08-06",
-            messages=[
-                {
-                    "role": "system",
-                    "content": f"""You are an expert in Stock investing. Analyze the provided data including technical indicators, market data, recent news headlines, the Fear and Greed Index, YouTube video transcript, VIX INDEX, and the chart image. Tell me whether to buy, sell, or hold at the moment. Consider the following in your analysis:
+        # PCA 처리
+        processed_data, processor = self.prepare_data_for_openai(monthly_df, daily_df)
+
+        # 뉴스 데이터의 날짜 처리
+        for source in news.values():
+            for item in source:
+                if isinstance(item.get('date'), (date, datetime)):
+                    item['date'] = item['date'].isoformat()
+
+        # Fear & Greed Index의 날짜 처리
+        if isinstance(fgi.get('last_update'), (date, datetime)):
+            fgi['last_update'] = fgi['last_update'].isoformat()
+
+        # 데이터 준비 및 JSON 직렬화
+        input_data = json.dumps({
+            "stock": self.stock,
+            "processed_technical_data": processed_data,
+            "fear_and_greed_index": fgi,
+            "vix_index": vix_index,
+            "news": news,
+            "current_price": current_price
+        }, cls=CustomJSONEncoder)
+
+        # 토큰 수 계산 및 로깅
+        system_prompt = f"""You are an expert in Stock investing. Analyze the provided data including technical indicators (provided as PCA components with metadata), market data, recent news headlines, the Fear and Greed Index, YouTube video transcript, VIX INDEX. 
+                    The technical indicators have been compressed using PCA while preserving {processed_data['metadata']['monthly_data']['total_variance_preserved']:.3%} of the variance for monthly data 
+                    and {processed_data['metadata']['daily_data']['total_variance_preserved']:.3%} for daily data. The original features were: {processed_data['metadata']['description']['monthly_original_features']} for monthly data and {processed_data['metadata']['description']['daily_original_features']} for daily data.
+                    Tell me whether to buy, sell, or hold at the moment. Consider the following in your analysis:
                                 - Technical indicators and market data
                                 - Recent news headlines and their potential impact on Stock price
                                 - The Fear and Greed Index and its implications
@@ -676,38 +680,44 @@ class AIStockAdvisor:
                                 - Insights from the YouTube video transcript
                                 - Current stock price: ${current_price}
                                 - Current VIX INDEX: {vix_index}
+                    Particularly important is to always refer to the trading strategy to assess the current situation and make trading decisions. The trading strategy is as follows:
+                    {strategy}
+                    Based on this trading strategy, analyze the current market situation and make a judgment by synthesizing it with the provided data.
+                    Additionally, predict the next day's closing price for the stock based on your analysis.
+                    Respond with:
+                    1. A decision (BUY, SELL, or HOLD)
+                    2. If the decision is 'BUY' or 'SELL', provide an intensity expressed as a percentage ratio (1 to 100).
+                       If the decision is 'HOLD', set the percentage to 0.
+                    3. A reason for your decision
+                    4. A prediction for the next day's closing price
+                    Ensure that the percentage is an integer between 1 and 100 for buy/sell decisions, and exactly 0 for hold decisions.
+                    Your percentage should reflect the strength of your conviction in the decision based on the analyzed data.
+                    The next day's closing price prediction should be a float value."""
 
-                                Particularly important is to always refer to the trading method of 'Larry Williams', a legendary stock investor, to assess the current situation and make trading decisions. Larry Williams's trading method is as follows:
+        system_tokens = self.count_tokens(system_prompt)
+        input_tokens = self.count_tokens(input_data)
+        youtube_tokens = self.count_tokens(strategy)
 
-                                {youtube_transcript}
+        self.logger.info(f"""Token counts:
+                    System prompt: {system_tokens}
+                    Input data: {input_tokens}
+                    YouTube transcript: {youtube_tokens}
+                    Total: {system_tokens + input_tokens + youtube_tokens}
+                """)
 
-                                Based on this trading method, analyze the current market situation and make a judgment by synthesizing it with the provided data.
-
-                                Additionally, predict the next day's closing price for the stock based on your analysis.
-
-                                Respond with:
-                                1. A decision (BUY, SELL, or HOLD)
-                                2. If the decision is 'BUY' or 'SELL', provide an intensity expressed as a percentage ratio (1 to 100).
-                                   If the decision is 'HOLD', set the percentage to 0.
-                                3. A reason for your decision
-                                4. A prediction for the next day's closing price
-
-                                Ensure that the percentage is an integer between 1 and 100 for buy/sell decisions, and exactly 0 for hold decisions.
-                                Your percentage should reflect the strength of your conviction in the decision based on the analyzed data.
-                                The next day's closing price prediction should be a float value."""},
+        self.logger.info("Sending request to OpenAI")
+        response = self.openai_client.chat.completions.create(
+            model="gpt-4o-2024-08-06",
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt},
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": json.dumps({
-                                "stock": self.stock,
-                                "monthly_data": monthly_df.to_json(),
-                                "daily_data": daily_df.to_json(),
-                                "fear_and_greed_index": fgi,
-                                "vix_index": vix_index,
-                                "news": news
-                            })
+                            "text": input_data
                         }
                     ]
                 }
