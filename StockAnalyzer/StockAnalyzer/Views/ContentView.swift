@@ -153,9 +153,9 @@ struct ContentView: View {
                             VStack(spacing: 20) {
                                 // Yahoo Finance Chart Section
                                 VStack(alignment: .leading) {
-                                    Text("Real-Time Price Chart")
-                                        .font(.headline)
-                                        .padding(.horizontal)
+//                                    Text("Real-Time Price Chart")
+//                                        .font(.headline)
+//                                        .padding(.horizontal)
                                     
                                     if !stockSymbol.isEmpty {
                                         YahooFinanceChartView(symbol: stockSymbol)
