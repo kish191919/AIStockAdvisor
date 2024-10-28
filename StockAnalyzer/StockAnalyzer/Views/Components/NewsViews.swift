@@ -1,3 +1,4 @@
+
 //Views/Components/NewsViews.swift
 import SwiftUI
 import SafariServices

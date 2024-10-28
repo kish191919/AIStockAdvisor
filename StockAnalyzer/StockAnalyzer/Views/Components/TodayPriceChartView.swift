@@ -1,3 +1,4 @@
+
 // Views/Components/TodayPriceChartView.swift
 
 import SwiftUI

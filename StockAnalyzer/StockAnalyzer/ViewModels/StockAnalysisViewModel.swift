@@ -1,3 +1,4 @@
+
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
@@ -14,6 +15,7 @@ class StockAnalysisViewModel: ObservableObject {
         
         let request = StockAnalysisRequest(symbol: symbol, language: language)
         
+        // 실제 서버 URL로 변경
         guard let url = URL(string: "https://aistockadvisor.net/api/analyze") else {
             error = "Invalid URL"
             isLoading = false

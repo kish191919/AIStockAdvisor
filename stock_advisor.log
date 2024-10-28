@@ -999,3 +999,322 @@ PCA does not accept missing values encoded as NaN natively. For supervised learn
 2024-10-27 01:56:38,130 - tsla_analyzer - INFO - Received response from OpenAI
 2024-10-27 01:56:38,130 - tsla_analyzer - INFO - Translating text to ko
 2024-10-27 01:56:39,524 - tsla_analyzer - INFO - Translation successful
+2024-10-27 16:47:13,177 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 16:47:13,178 - NVDA_analyzer - INFO - Current OTP: 448866
+2024-10-27 16:47:13,504 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 16:47:13,519 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 16:47:13,705 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 16:47:13,769 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 16:47:13,779 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 16:47:13,780 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 16:47:13,783 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 16:47:13,783 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 16:47:13,783 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 16:47:13,783 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 16:47:13,788 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 16:47:13,788 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 16:47:13,788 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 16:47:14,093 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 16:47:14,093 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 16:47:14,241 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 16:47:14,243 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 16:47:14,317 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 16:47:14,318 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 16:47:14,404 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 16:47:14,428 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 16:47:14,428 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 16:47:14,521 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 16:47:14,555 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5726
+                    YouTube transcript: 1970
+                    Total: 10670
+                
+2024-10-27 16:47:14,555 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 16:47:19,007 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 16:47:19,016 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 16:47:19,017 - NVDA_analyzer - INFO - Translating text to en
+2024-10-27 16:47:19,176 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 17:05:48,326 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:05:48,326 - NVDA_analyzer - INFO - Current OTP: 961113
+2024-10-27 17:05:48,467 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:05:48,482 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:05:48,681 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:05:48,740 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:05:48,742 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:05:48,742 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:05:48,743 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:05:48,743 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:05:48,743 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:05:48,743 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:05:48,747 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:05:48,747 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:05:48,747 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:05:49,039 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:05:49,039 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:05:49,161 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:05:49,162 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:05:49,231 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:05:49,233 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:05:49,322 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:05:49,345 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:05:49,345 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:05:49,421 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:05:49,439 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5726
+                    YouTube transcript: 1970
+                    Total: 10670
+                
+2024-10-27 17:05:49,439 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:05:52,168 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 17:05:52,177 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:05:52,177 - NVDA_analyzer - INFO - Translating text to ko
+2024-10-27 17:05:53,201 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 17:17:19,586 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:17:19,589 - NVDA_analyzer - INFO - Current OTP: 785171
+2024-10-27 17:17:19,756 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:17:19,798 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:17:19,977 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:17:20,041 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:17:20,051 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:17:20,052 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:17:20,055 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:17:20,055 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:17:20,055 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:17:20,055 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:17:20,061 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:17:20,061 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:17:20,061 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:17:20,372 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:17:20,372 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:17:20,597 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:17:20,598 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:17:20,734 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:17:20,736 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:17:20,866 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:17:20,893 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:17:20,893 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:17:20,986 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:17:21,009 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5726
+                    YouTube transcript: 1970
+                    Total: 10670
+                
+2024-10-27 17:17:21,009 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:17:27,674 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 17:17:27,691 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:17:27,691 - NVDA_analyzer - INFO - Translating text to ko
+2024-10-27 17:17:29,114 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 17:23:39,965 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:23:39,966 - NVDA_analyzer - INFO - Current OTP: 977440
+2024-10-27 17:23:40,103 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:23:40,144 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:23:40,382 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:23:40,441 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:23:40,444 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:23:40,444 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:23:40,446 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:23:40,446 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:23:40,446 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:23:40,446 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:23:40,450 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:23:40,450 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:23:40,450 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:23:40,824 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:23:40,825 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:23:41,046 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:23:41,047 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:23:41,123 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:23:41,125 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:23:41,232 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:23:41,261 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:23:41,261 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:23:41,343 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:23:41,360 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10673
+                
+2024-10-27 17:23:41,360 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:23:43,890 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 17:23:43,903 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:23:43,904 - NVDA_analyzer - INFO - Translating text to ko
+2024-10-27 17:23:45,222 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 17:23:45,222 - NVDA_analyzer - INFO - result: decision='HOLD' percentage=0 reason='The technical indicators show signs of peak and potential correction with recent momentum declines, and consolidation in price patterns is not evident enough to warrant a decisive entry. News sentiment is mixed with both potential growth from AI but also concerns around high valuations, indicating market uncertainty. The Fear and Greed Index at 58 shows moderate greed but is not in extreme levels, suggesting limited strong directional movement. The VIX at 20.33 indicates fairly moderate volatility. The trading strategy requires at least three confirmation signals for entry, which are not currently present. Thus, a HOLD decision is prudent until clearer signals emerge.' expected_next_day_price=142.75
+2024-10-27 17:32:55,358 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:32:55,359 - NVDA_analyzer - INFO - Current OTP: 870914
+2024-10-27 17:32:55,495 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:32:55,533 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:32:55,752 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:32:55,818 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:32:55,822 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:32:55,822 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:32:55,823 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:32:55,823 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:32:55,823 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:32:55,823 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:32:55,828 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:32:55,828 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:32:55,828 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:32:56,149 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:32:56,149 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:32:56,435 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:32:56,435 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:32:56,560 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:32:56,562 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:32:56,657 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:32:56,683 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:32:56,684 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:32:56,779 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:32:56,800 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10673
+                
+2024-10-27 17:32:56,800 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:32:56,800 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:32:56,800 - AIStockAdvisor - ERROR - Error analyzing stock NVDA: 'dict' object has no attribute 'reason'
+2024-10-27 17:34:06,464 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:34:06,466 - NVDA_analyzer - INFO - Current OTP: 015761
+2024-10-27 17:34:06,575 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:34:06,612 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:34:06,784 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:34:06,845 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:34:06,849 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:34:06,849 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:34:06,851 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:34:06,851 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:34:06,851 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:34:06,851 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:34:06,855 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:34:06,855 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:34:06,855 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:34:07,176 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:34:07,176 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:34:07,301 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:34:07,302 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:34:07,369 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:34:07,371 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:34:07,460 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:34:07,485 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:34:07,485 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:34:07,566 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:34:07,585 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10673
+                
+2024-10-27 17:34:07,585 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:34:07,585 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:34:07,585 - AIStockAdvisor - ERROR - Error analyzing stock NVDA: 'dict' object has no attribute 'reason'
+2024-10-27 17:40:40,110 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:40:40,111 - NVDA_analyzer - INFO - Current OTP: 608913
+2024-10-27 17:40:40,255 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:40:40,295 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:40:40,515 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:40:40,568 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:40:40,572 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:40:40,572 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:40:40,573 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:40:40,573 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:40:40,573 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:40:40,573 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:40:40,578 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:40:40,578 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:40:40,578 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:40:40,880 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:40:40,880 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:40:41,108 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:40:41,108 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:40:41,181 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:40:41,183 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:40:41,287 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:40:41,316 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:40:41,317 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:40:41,415 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:40:41,435 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2974
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10673
+                
+2024-10-27 17:40:41,435 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:40:44,015 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-27 17:40:44,029 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:40:44,029 - NVDA_analyzer - INFO - Translating text to ko
+2024-10-27 17:40:44,897 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 17:46:37,708 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 17:46:37,708 - NVDA_analyzer - INFO - Current OTP: 472228
+2024-10-27 17:46:37,834 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 17:46:37,862 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 17:46:38,030 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 17:46:38,086 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:46:38,096 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:46:38,096 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 17:46:38,099 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:46:38,099 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 17:46:38,099 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:46:38,099 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 17:46:38,105 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 17:46:38,105 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 17:46:38,105 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 17:46:38,399 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 17:46:38,399 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 17:46:38,516 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 17:46:38,518 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 17:46:38,653 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 17:46:38,654 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 17:46:38,761 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 17:46:38,791 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 17:46:38,791 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 17:46:38,886 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 17:46:38,908 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2973
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10672
+                
+2024-10-27 17:46:38,908 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 17:46:38,908 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 17:46:38,908 - NVDA_analyzer - INFO - Translating text to ko
+2024-10-27 17:46:39,041 - NVDA_analyzer - INFO - Translation successful
+2024-10-27 18:19:07,245 - AIStockAdvisor - INFO - Analyzing stock NVDA
+2024-10-27 18:19:07,249 - NVDA_analyzer - INFO - Current OTP: 936015
+2024-10-27 18:19:07,356 - NVDA_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-27 18:19:07,395 - NVDA_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-27 18:19:07,592 - NVDA_analyzer - INFO - Fetching chart data for NVDA
+2024-10-27 18:19:07,663 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 18:19:07,677 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 18:19:07,678 - AIStockAdvisor - INFO - Original columns: ['begins_at', 'open_price', 'close_price', 'high_price', 'low_price', 'volume', 'session', 'interpolated', 'symbol']
+2024-10-27 18:19:07,681 - AIStockAdvisor - INFO - Processed columns: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 18:19:07,681 - AIStockAdvisor - INFO - Adding technical indicators
+2024-10-27 18:19:07,681 - AIStockAdvisor - INFO - Monthly DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 18:19:07,681 - AIStockAdvisor - INFO - Daily DataFrame columns before indicators: ['Open', 'Close', 'High', 'Low', 'Volume']
+2024-10-27 18:19:07,686 - AIStockAdvisor - INFO - Monthly DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram', 'MA_10', 'MA_20', 'MA_60']
+2024-10-27 18:19:07,686 - AIStockAdvisor - INFO - Daily DataFrame columns after indicators: ['Open', 'Close', 'High', 'Low', 'Volume', 'SMA', 'STD', 'Upper_Band', 'Lower_Band', 'RSI', 'EMA_fast', 'EMA_slow', 'MACD', 'Signal_Line', 'MACD_Histogram']
+2024-10-27 18:19:07,686 - NVDA_analyzer - INFO - Fetching news from Yahoo Finance for NVDA
+2024-10-27 18:19:07,687 - NVDA_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-27 18:19:07,687 - NVDA_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-27 18:19:07,805 - NVDA_analyzer - INFO - Retrieved 5 news items from Alpha Vantage
+2024-10-27 18:19:07,805 - NVDA_analyzer - INFO - Fetching news from Robinhood
+2024-10-27 18:19:07,884 - NVDA_analyzer - INFO - Retrieved 5 news items from Robinhood
+2024-10-27 18:19:07,885 - NVDA_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-27 18:19:07,975 - NVDA_analyzer - INFO - Fetching current price for NVDA
+2024-10-27 18:19:08,003 - NVDA_analyzer - INFO - Current price for NVDA: $141.06
+2024-10-27 18:19:08,003 - NVDA_analyzer - INFO - Fetching VIX INDEX data
+2024-10-27 18:19:08,136 - NVDA_analyzer - INFO - Current VIX INDEX: 20.33
+2024-10-27 18:19:08,181 - NVDA_analyzer - INFO - Token counts:
+                    System prompt: 2973
+                    Input data: 5729
+                    YouTube transcript: 1970
+                    Total: 10672
+                
+2024-10-27 18:19:08,181 - NVDA_analyzer - INFO - Sending request to OpenAI
+2024-10-27 18:19:08,181 - NVDA_analyzer - INFO - Received response from OpenAI
+2024-10-27 18:19:08,181 - NVDA_analyzer - INFO - Translating text to en
+2024-10-27 18:19:08,385 - NVDA_analyzer - INFO - Translation successful

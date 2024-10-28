@@ -1,3 +1,4 @@
+
 //Views/Components/ResultView.swift
 import SwiftUI
 import Combine  // ObservableObject와 @Published를 사용하기 위해 필요

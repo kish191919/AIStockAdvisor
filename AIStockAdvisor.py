@@ -32,8 +32,7 @@ import pandas as pd
 
 import json
 from datetime import date, datetime
-
-
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Load environment variables and set up logging
 load_dotenv()
@@ -83,16 +82,14 @@ class TechnicalDataProcessor:
         # Drop columns where all values are NaN
         numeric_df = numeric_df.dropna(axis=1, how='all')
 
-        # Forward fill missing values
-        numeric_df = numeric_df.fillna(method='ffill')
-
-        # Backward fill any remaining missing values
-        numeric_df = numeric_df.fillna(method='bfill')
+        # 경고를 피하기 위해 ffill()과 bfill() 직접 사용
+        numeric_df = numeric_df.ffill()
+        numeric_df = numeric_df.bfill()
 
         # If there are still any NaN values, replace them with 0
         numeric_df = numeric_df.fillna(0)
 
-        # Drop any columns that still have NaN values (shouldn't happen, but just in case)
+        # Drop any columns that still have NaN values
         numeric_df = numeric_df.dropna(axis=1)
 
         # Ensure we have at least one column
@@ -685,7 +682,7 @@ class AIStockAdvisor:
                     1. A decision (BUY, SELL, or HOLD)
                     2. If the decision is 'BUY' or 'SELL', provide an intensity expressed as a percentage ratio (1 to 100).
                        If the decision is 'HOLD', set the percentage to 0.
-                    3. A reason for your decision (Avoid using the term PCA)
+                    3. A reason for your decision (Don't mention PCA)
                     4. A prediction for the next day's closing price
                     Ensure that the percentage is an integer between 1 and 100 for buy/sell decisions, and exactly 0 for hold decisions.
                     Your percentage should reflect the strength of your conviction in the decision based on the analyzed data.
@@ -740,6 +737,12 @@ class AIStockAdvisor:
             }
         )
         result = TradingDecision.model_validate_json(response.choices[0].message.content)
+        # result = TradingDecision(
+        #     decision='HOLD',
+        #     percentage=0,
+        #     reason="Nvidia's stock price is near all-time highs and currently exhibits strong momentum. The recent PCA components suggest heightened volatility and a potential consolidation phase after a significant upward move, primarily based on the most recent daily and monthly processed indicators. Additionally, the Fear and Greed Index reflects a market under greed, which often precedes increased volatility or sudden downturns. The VIX index remains at a moderately elevated level, indicating caution regarding market volatility. Recent news highlights substantial interest in Nvidia driven by AI demand and looming earnings, creating uncertainty around future price movement. Given these factors, none of the entry conditions are distinctly met, and technical indicators do not show a compelling entry point. Thus, I recommend holding off any new position until clearer signals emerge.",
+        #     expected_next_day_price=142.5
+        # )
         self.logger.info("Received response from OpenAI")
 
         reason_translated = self._translate_to_language(result.reason, self.lang)
@@ -753,7 +756,8 @@ class AIStockAdvisor:
             'ExpectedNextDayPrice': round(result.expected_next_day_price, 2),
             'VIX_INDEX': vix_index
         })
-
+        print("result:", result)
+        print("input:",input_data )
         return result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df
 
 
