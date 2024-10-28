@@ -13,15 +13,6 @@ struct ResultView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Today's Price Chart
-            if let chartData = result.chartData {
-                TodayPriceChartView(dailyData: chartData.dailyData)
-                    .frame(height: 200)
-                    .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(10)
-                    .shadow(radius: 2)
-            }
             
             // Decision Section
             DecisionSection(result: result)

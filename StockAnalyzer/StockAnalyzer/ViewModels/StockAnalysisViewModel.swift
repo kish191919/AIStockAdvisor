@@ -7,7 +7,6 @@ class StockAnalysisViewModel: ObservableObject {
     @Published var result: StockAnalysisResponse?
     @Published var isLoading = false
     @Published var error: String?
-    @Published var chartData: ChartData?
     
     func analyzeStock(symbol: String, language: String) {
         isLoading = true
@@ -62,7 +61,6 @@ class StockAnalysisViewModel: ObservableObject {
                     let decoder = JSONDecoder()
                     let response = try decoder.decode(StockAnalysisResponse.self, from: data)
                     self?.result = response
-                    self?.chartData = response.chartData
                 } catch {
                     self?.error = "Failed to decode response: \(error.localizedDescription)"
                     print("Decoding error details: \(error)")

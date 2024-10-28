@@ -170,17 +170,6 @@ struct ContentView: View {
                                 // Analysis Results
                                 ResultView(result: result)
                                 
-                                // Technical Indicators Chart
-                                if let chartData = viewModel.chartData {
-                                    VStack(alignment: .leading) {
-                                        Text("Technical Indicators")
-                                            .font(.headline)
-                                            .padding(.horizontal)
-                                        
-                                        StockChartView(chartData: chartData)
-                                    }
-                                }
-                                
                                 // News Section
                                 NewsListView(news: result.news)
                             }

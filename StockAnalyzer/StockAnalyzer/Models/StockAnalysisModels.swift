@@ -23,7 +23,6 @@ struct StockAnalysisResponse: Decodable {
     let vixIndex: Double?
     let fearGreedIndex: FearGreedIndex
     let news: StockNewsData
-    let chartData: ChartData?
     
     enum CodingKeys: String, CodingKey {
         case decision
@@ -34,7 +33,6 @@ struct StockAnalysisResponse: Decodable {
         case vixIndex = "vix_index"
         case fearGreedIndex = "fear_greed_index"
         case news
-        case chartData = "chart_data"
     }
 }
 
