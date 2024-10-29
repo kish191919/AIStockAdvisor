@@ -79,115 +79,124 @@ struct ContentView: View {
     ]
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Input Section
-                    VStack(spacing: 15) {
-                        HStack(spacing: 10) {
-                            TextField("Stock Symbol (e.g., AAPL)", text: $stockSymbol)
-                                .autocapitalization(.allCharacters)
-                                .focused($isTextFieldFocused)
-                                .frame(height: 44)
-                                .padding(.horizontal, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray.opacity(0.3))
-                                        .background(Color(.systemBackground))
-                                )
-                            
-                            Picker("Language", selection: $selectedLanguage) {
-                                ForEach(languages.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
-                                    Text(value).tag(key)
-                                }
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            .frame(width: 100)
-                        }
-                        
-                        Button(action: {
-                            isTextFieldFocused = false
-                            // 두 API 호출을 동시에 수행
-                            viewModel.analyzeStock(symbol: stockSymbol, language: selectedLanguage)
-                            yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
-                        }) {
-                            Text("Analyze Stock")
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 44)
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                        }
-                        .disabled(stockSymbol.isEmpty || viewModel.isLoading)
-                    }
-                    .padding()
-                    
-                    // Results Section
-                    ScrollView {
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                                .scaleEffect(1.5)
-                                .padding()
-                        } else if let error = viewModel.error {
-                            VStack(spacing: 10) {
-                                Image(systemName: "exclamationmark.triangle")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.orange)
+            NavigationView {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Input Section
+                        VStack(spacing: 15) {
+                            HStack(spacing: 10) {
+                                TextField("Stock Symbol (e.g., AAPL)", text: $stockSymbol)
+                                    .autocapitalization(.allCharacters)
+                                    .focused($isTextFieldFocused)
+                                    .frame(height: 44)
+                                    .padding(.horizontal, 10)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray.opacity(0.3))
+                                            .background(Color(.systemBackground))
+                                    )
                                 
-                                Text(error)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(.secondary)
-                                
-                                Button("Try Again") {
-                                    viewModel.analyzeStock(symbol: stockSymbol, language: selectedLanguage)
-                                    yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
-                                }
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                            }
-                            .padding()
-                        } else if let result = viewModel.result {
-                            VStack(spacing: 20) {
-                                // Yahoo Finance Chart Section
-                                VStack(alignment: .leading) {
-//                                    Text("Real-Time Price Chart")
-//                                        .font(.headline)
-//                                        .padding(.horizontal)
-                                    
-                                    if !stockSymbol.isEmpty {
-                                        YahooFinanceChartView(symbol: stockSymbol)
-                                            .frame(height: 400)
+                                Picker("Language", selection: $selectedLanguage) {
+                                    ForEach(languages.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
+                                        Text(value).tag(key)
                                     }
                                 }
-                                .padding()
-                                .background(Color(.systemBackground))
-                                .cornerRadius(10)
-                                .shadow(radius: 2)
-                                
-                                // Analysis Results
-                                ResultView(result: result)
-                                
-                                // News Section
-                                NewsListView(news: result.news)
+                                .pickerStyle(MenuPickerStyle())
+                                .frame(width: 100)
                             }
-                            .padding()
+                            
+                            Button {
+                                isTextFieldFocused = false
+                                Task {
+                                    await viewModel.analyzeStock(symbol: stockSymbol, language: selectedLanguage)
+                                    if viewModel.result != nil {
+                                        viewModel.savePrediction(symbol: stockSymbol)
+                                    }
+                                    yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
+                                }
+                            } label: {
+                                Text("Analyze Stock")
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 44)
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                            }
+                            .disabled(stockSymbol.isEmpty || viewModel.isLoading)
+                        }
+                        .padding()
+                        
+                        // Results Section
+                        ScrollView {
+                            if viewModel.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .scaleEffect(1.5)
+                                    .padding()
+                            } else if let error = viewModel.error {
+                                VStack(spacing: 10) {
+                                    Image(systemName: "exclamationmark.triangle")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.orange)
+                                    
+                                    Text(error)
+                                        .multilineTextAlignment(.center)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Button("Try Again") {
+                                        Task {
+                                            await viewModel.analyzeStock(symbol: stockSymbol, language: selectedLanguage)
+                                            yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                }
+                                .padding()
+                            } else if let result = viewModel.result {
+                                VStack(spacing: 20) {
+                                    // Yahoo Finance Chart Section
+                                    VStack(alignment: .leading) {
+                                        if !stockSymbol.isEmpty {
+                                            YahooFinanceChartView(symbol: stockSymbol)
+                                                .frame(height: 400)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color(.systemBackground))
+                                    .cornerRadius(10)
+                                    .shadow(radius: 2)
+                                    
+                                    // Analysis Results
+                                    ResultView(result: result)
+                                    
+                                    // News Section
+                                    NewsListView(news: result.news)
+                                }
+                                .padding()
+                            }
+                        }
+                        .onTapGesture {
+                            isTextFieldFocused = false
                         }
                     }
-                    .onTapGesture {
-                        isTextFieldFocused = false
+                }
+                .navigationTitle("Stock Analyzer")
+                .onTapGesture {
+                    isTextFieldFocused = false
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink("History") {
+                            StockAnalysisHistoryView()
+                        }
                     }
                 }
             }
-            .navigationTitle("Stock Analyzer")
-            .onTapGesture {
-                isTextFieldFocused = false
-            }
         }
     }
-}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
