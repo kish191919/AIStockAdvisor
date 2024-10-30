@@ -21,7 +21,8 @@ class StockAnalysisViewModel: ObservableObject {
         
         let request = StockAnalysisRequest(symbol: symbol, language: language)
         
-        guard let url = URL(string: "https://aistockadvisor.net/api/analyze") else {
+        //guard let url = URL(string: "https://aistockadvisor.net/api/analyze") else {
+        guard let url = URL(string: "http://localhost:8000/api/analyze") else {
             error = "Invalid URL"
             isLoading = false
             return

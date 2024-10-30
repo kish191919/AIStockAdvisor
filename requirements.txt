@@ -24,3 +24,5 @@ uvicorn
 pydantic
 transformers
 scikit-learn
+torch
+tensorflow

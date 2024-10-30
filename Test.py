@@ -1,33 +1,42 @@
 import os
 import logging
+import json
 import sqlite3
+import requests
+import pandas as pd
 import yfinance as yf
 import pyotp
 import robin_stocks as r
 import fear_and_greed
-import pandas as pd
-import json
-import requests
-import numpy as np
-import re
-
-
+import time
+from youtube_transcript_api import YouTubeTranscriptApi
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import Optional, Dict, Any, List
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from openai import OpenAI
 from deep_translator import GoogleTranslator
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from transformers import GPT2TokenizerFast
+
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
+
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import pandas as pd
+
+import json
 from datetime import date, datetime
-from youtube_transcript_api import YouTubeTranscriptApi
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.decomposition import PCA
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # 데이터프레임 출력 설정 변경
 pd.set_option('display.max_columns', None)  # 모든 컬럼 표시
 pd.set_option('display.width', 1000)        # 출력 폭 확대
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Load environment variables and set up logging
 load_dotenv()
@@ -40,6 +49,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
 
 # Configuration class
 class Config:
@@ -76,7 +86,7 @@ class TechnicalDataProcessor:
         # Drop columns where all values are NaN
         numeric_df = numeric_df.dropna(axis=1, how='all')
 
-        # 경고를 피하기 위해 ffill()과 bfill() 직접 사용
+        # Forward fill and backward fill to handle NaN values
         numeric_df = numeric_df.ffill()
         numeric_df = numeric_df.bfill()
 
@@ -92,31 +102,71 @@ class TechnicalDataProcessor:
 
         return numeric_df
 
-    # Fit PCA and transform data
-    def fit_transform(self, df, prefix):
+    def get_feature_contributions(self, prefix):
+        """각 PC에 대한 원본 특성들의 기여도 계산"""
+        pca = self.pcas[prefix]
+        feature_names = self.feature_names[prefix]
 
-        # Prepare data
+        contributions = {}
+        for i, pc in enumerate(pca.components_):
+            # 각 특성의 절대값 기여도를 계산
+            abs_contributions = np.abs(pc)
+            # 기여도를 정규화
+            normalized_contributions = abs_contributions / np.sum(abs_contributions)
+            # 특성별 기여도를 딕셔너리로 저장
+            feature_contributions = dict(zip(feature_names, normalized_contributions))
+            # 기여도가 큰 순서로 정렬
+            sorted_contributions = dict(sorted(
+                feature_contributions.items(),
+                key=lambda x: x[1],
+                reverse=True
+            ))
+            # 상위 5개 영향력 있는 특성만 선택
+            top_contributions = dict(list(sorted_contributions.items())[:5])
+            contributions[f'PC{i + 1}'] = top_contributions
+
+        return contributions
+
+    def get_pc_interpretation(self, prefix):
+        """각 PC의 의미를 해석"""
+        contributions = self.get_feature_contributions(prefix)
+        interpretations = {}
+
+        for pc, features in contributions.items():
+            # 상위 3개 특성을 문자열로 결합
+            top_features = list(features.items())[:3]
+            interpretation = " + ".join([
+                f"{feature}({weight:.3f})"
+                for feature, weight in top_features
+            ])
+            interpretations[pc] = interpretation
+
+        return interpretations
+
+    def fit_transform(self, df, prefix):
+        """PCA 적용 및 변환"""
+        # 데이터 준비
         numeric_df = self._prepare_dataframe(df)
         original_index = numeric_df.index
 
-        # Store feature names
+        # 특성 이름 저장
         self.feature_names[prefix] = numeric_df.columns.tolist()
 
-        # Scale the data
+        # 데이터 스케일링
         scaler = StandardScaler()
         scaled_data = scaler.fit_transform(numeric_df)
         self.scalers[prefix] = scaler
 
-        # Apply PCA
+        # PCA 적용
         pca = PCA()
         transformed_data = pca.fit_transform(scaled_data)
         self.pcas[prefix] = pca
 
-        # Determine number of components needed
+        # 필요한 컴포넌트 수 결정
         cumulative_variance_ratio = np.cumsum(pca.explained_variance_ratio_)
         n_components = np.argmax(cumulative_variance_ratio >= self.variance_ratio_threshold) + 1
 
-        # Create DataFrame with reduced components
+        # 결과 데이터프레임 생성
         columns = [f'PC{i + 1}' for i in range(n_components)]
         pca_df = pd.DataFrame(
             transformed_data[:, :n_components],
@@ -124,12 +174,18 @@ class TechnicalDataProcessor:
             index=original_index
         )
 
-        # Add variance explained information
+        # 특성 기여도 및 해석 계산
+        feature_contributions = self.get_feature_contributions(prefix)
+        pc_interpretations = self.get_pc_interpretation(prefix)
+
+        # 메타데이터 생성
         variance_explained = {
             f'{prefix}_variance_explained': {
                 'total_variance_preserved': float(cumulative_variance_ratio[n_components - 1]),
                 'n_components': int(n_components),
-                'component_variance_ratios': pca.explained_variance_ratio_[:n_components].tolist()
+                'component_variance_ratios': pca.explained_variance_ratio_[:n_components].tolist(),
+                'feature_contributions': feature_contributions,
+                'pc_interpretations': pc_interpretations
             }
         }
 
@@ -138,6 +194,7 @@ class TechnicalDataProcessor:
 
 class CustomJSONEncoder(json.JSONEncoder):
     """날짜와 NumPy 타입을 처리할 수 있는 커스텀 JSON 인코더"""
+
     def default(self, obj):
         if isinstance(obj, (date, datetime)):
             return obj.isoformat()
@@ -150,6 +207,7 @@ class CustomJSONEncoder(json.JSONEncoder):
         if pd.isna(obj):
             return None
         return super().default(obj)
+
 
 
 # AI Stock Advisor System class
@@ -189,13 +247,9 @@ class AIStockAdvisor:
         try:
             # Yahoo Finance에서 시도
             ticker = yf.Ticker(self.stock)
-            data = ticker.history(period='1d')
-            if not data.empty:
-                current_price = round(data['Close'].iloc[-1], 2)
-                self.logger.info(f"Current price from Yahoo Finance for {self.stock}: ${current_price:.2f}")
-                return current_price
-            raise Exception("No data from Yahoo Finance")
-
+            current_price = round(ticker.info['regularMarketPrice'], 2)
+            self.logger.info(f"Current price from Yahoo Finance for {self.stock}: ${current_price:.2f}")
+            return current_price
         except Exception as e:
             self.logger.warning(f"Error fetching from Yahoo Finance: {str(e)}. Trying Robinhood...")
             try:
@@ -251,8 +305,8 @@ class AIStockAdvisor:
                 self.stock, interval="5minute", span="day", bounds="regular"
             )
 
-        print("daily_historicals: ", daily_historicals)
-        print("monthly_historicals: ", monthly_historicals)
+        print("daily_historicals: ",daily_historicals)
+        print("monthly_historicals: ",monthly_historicals)
 
         return self._add_indicators(monthly_historicals, daily_historicals)
 
@@ -293,6 +347,7 @@ class AIStockAdvisor:
 
                 df.set_index('Date', inplace=True)
                 return df[['Open', 'High', 'Low', 'Close', 'Volume']]
+
 
             # 볼린저 밴드 함수 추가
             def add_bollinger_bands(df, window=20, num_std=2):
@@ -552,45 +607,21 @@ class AIStockAdvisor:
         ))
         self.db_connection.commit()
 
-    def optimize_input_data(self, data):
-        # 1. 특수문자 및 불필요한 공백 제거
-        def clean_text(text):
-            # 연속된 공백을 하나로 변경
-            text = re.sub(r'\s+', ' ', text)
-            # 줄바꿈 제거
-            text = text.replace('\n', ' ')
-            # 양쪽 공백 제거
-            text = text.strip()
-            return text
-
-        # 2. JSON 데이터 최적화
-        def optimize_json(json_data):
-            if isinstance(json_data, dict):
-                return {k: optimize_json(v) for k, v in json_data.items() if v is not None}
-            elif isinstance(json_data, list):
-                return [optimize_json(item) for item in json_data]
-            elif isinstance(json_data, str):
-                return clean_text(json_data)
-            elif isinstance(json_data, float):
-                return round(json_data, 2)  # 소수점 2자리로 제한
-            else:
-                return json_data
-
-        # 3. 문자열을 JSON으로 파싱 후 최적화
-        if isinstance(data, str):
-            try:
-                data = json.loads(data)
-            except json.JSONDecodeError:
-                return clean_text(data)
-
-        # 4. 최적화 적용
-        optimized_data = optimize_json(data)
-
-        # 5. 최적화된 데이터를 compact JSON 문자열로 변환
-        return json.dumps(optimized_data, separators=(',', ':'))
 
     def ai_stock_analysis(self):
         monthly_df, daily_df = self.get_chart_data()
+
+        print("daily_df1111:", daily_df)
+        print("monthly_df11111:", monthly_df)
+
+        # # 데이터 전처리 및 분석 준비
+        # daily_df, monthly_df = self.prepare_data_for_analysis(daily_df, monthly_df)
+        #
+        # print("daily_df22222:", daily_df)
+        # print("monthly_df2222:", monthly_df)
+
+
+
         news = self.get_news()
         f = open("strategy.txt", "r")
         strategy = f.read()
@@ -615,199 +646,11 @@ class AIStockAdvisor:
             fgi['last_update'] = fgi['last_update'].isoformat()
 
 
-        # 데이터 준비 및 JSON 직렬화
-        input_data = json.dumps({
-            "stock": self.stock,
-            "daily_df": json.dumps(daily_df.to_dict(), cls=CustomJSONEncoder),
-            "monthly_df": json.dumps(monthly_df.to_dict(), cls=CustomJSONEncoder),
-            "fear_and_greed_index": fgi,
-            "vix_index": vix_index,
-            "news": news,
-            "current_price": current_price
-        }, cls=CustomJSONEncoder)
+def main():
 
-        print("input_data: ", input_data)
-        optimized_input = self.optimize_input_data(input_data)
+    advisor = AIStockAdvisor(stock="TSLA")
+    advisor.ai_stock_analysis()
 
-        # 토큰 수 계산 및 로깅
-        system_prompt = f"""You are an expert in stock investing. Analyze the following elements: market data, recent news headlines, the Fear and Greed Index, and the VIX index.
-
-Based on your analysis, including {strategy}, provide:
-
-A decision (BUY, SELL, or HOLD).
-An intensity level as a percentage (1 to 100) reflecting your conviction in the decision.
-A reason for your decision based on reliable analysis.
-A prediction for the next day's closing price.
-Explain your analysis clearly and simply, suitable for someone new to stocks. If you mention terms like MA5, MA20, MACD, Signal Line, RSI, Volume Trend, Monthly RSI, or Monthly Return, please provide simple explanations for them."""
-
-        system_tokens = self.count_tokens(system_prompt)
-        input_tokens = self.count_tokens(input_data)
-        optimized_input_tokens = self.count_tokens(optimized_input)
-        strategy_tokens = self.count_tokens(strategy)
-
-        self.logger.info(f"""Token counts:
-                    System prompt: {system_tokens}
-                    Input token : {input_tokens}
-                    optimized_input_tokens: {optimized_input_tokens}
-                    strategy : {strategy_tokens}
-                    Total: {system_tokens + optimized_input_tokens + strategy_tokens }
-                """)
-
-        self.logger.info("Sending request to OpenAI")
-        response = self.openai_client.chat.completions.create(
-            model="gpt-4o-2024-08-06",
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt},
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": optimized_input
-                        }
-                    ]
-                }
-            ],
-            max_tokens=4095,
-            response_format={
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "trading_decision",
-                    "strict": True,
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "decision": {"type": "string", "enum": ["BUY", "SELL", "HOLD"]},
-                            "percentage": {"type": "integer"},
-                            "reason": {"type": "string"},
-                            "expected_next_day_price": {"type": "number"},
-                        },
-                        "required": ["decision", "percentage", "reason", "expected_next_day_price"],
-                        "additionalProperties": False
-                    }
-                }
-            }
-        )
-        result = TradingDecision.model_validate_json(response.choices[0].message.content)
-        self.logger.info("Received response from OpenAI")
-
-        reason_translated = self._translate_to_language(result.reason, self.lang)
-
-        # Record the trading decision and current state
-        self._record_trading_decision({
-            'Decision': result.decision,
-            'Percentage': result.percentage,
-            'Reason': result.reason,
-            'CurrentPrice': round(current_price, 2),
-            'ExpectedNextDayPrice': round(result.expected_next_day_price, 2),
-            'VIX_INDEX': vix_index
-        })
-        print("result:", result)
-        print("input:",input_data )
-        return result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df
-
-
-# FastAPI 앱 생성
-app = FastAPI()
-
-# Request 모델
-class StockAnalysisRequest(BaseModel):
-    symbol: str
-    language: str = "en"
-
-class DataFrameModel(BaseModel):
-    index: List[str]
-    columns: List[str]
-    data: List[List[Any]]
-
-# Response 모델
-class StockAnalysisResponse(BaseModel):
-    decision: str
-    percentage: int
-    reason: str
-    current_price: float
-    expected_next_day_price: float
-    vix_index: Optional[float]
-    fear_greed_index: Dict[str, Any]
-    news: Dict[str, List[Dict[str, str]]]  # NewsItem 대신 Dict 사용
-    monthly_df: Optional[DataFrameModel] = None
-    daily_df: Optional[DataFrameModel] = None
-
-    class Config:
-        from_attributes = True
-
-def serialize_dataframe(df: pd.DataFrame) -> Optional[DataFrameModel]:
-    if df is None:
-        return None
-
-    return DataFrameModel(
-        index=[str(idx) for idx in df.index],
-        columns=df.columns.tolist(),
-        data=df.values.tolist()
-    )
-
-@app.get("/")
-async def root():
-    """
-    Health check endpoint
-    """
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
-
-
-# API 엔드포인트 핸들러 수정
-@app.post("/api/analyze", response_model=StockAnalysisResponse)
-async def analyze_stock(request: StockAnalysisRequest):
-    try:
-        logger.info(f"Analyzing stock {request.symbol}")
-        advisor = AIStockAdvisor(request.symbol, request.language)
-
-        # 분석 실행
-        result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df = advisor.ai_stock_analysis()
-
-        print(monthly_df)
-        print(daily_df)
-
-        # DataFrame 직렬화
-        monthly_df_serialized = serialize_dataframe(monthly_df)
-        daily_df_serialized = serialize_dataframe(daily_df)
-
-        # 응답 생성
-        response = StockAnalysisResponse(
-            decision=result.decision,
-            percentage=result.percentage,
-            reason=reason_translated,
-            current_price=current_price,
-            expected_next_day_price=result.expected_next_day_price,
-            vix_index=vix_index,
-            fear_greed_index=fgi,
-            news=news,  # 이미 딕셔너리 형태로 되어 있음
-            monthly_df=monthly_df_serialized,
-            daily_df=daily_df_serialized
-        )
-
-        return response
-
-    except Exception as e:
-        logger.error(f"Error analyzing stock {request.symbol}: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# 에러 핸들러
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    logger.error(f"Unhandled exception: {str(exc)}")
-    return {
-        "detail": str(exc),
-        "timestamp": datetime.now().isoformat()
-    }
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "AIStockAdvisor:app",  # 파일명:app_변수명
-        host="0.0.0.0",
-        port=8000,
-        reload=False
-    )
+    main()

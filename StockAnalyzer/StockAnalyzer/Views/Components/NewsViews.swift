@@ -33,14 +33,6 @@ struct NewsListView: View {
                 )
             }
             
-            if !news.robinhoodNews.isEmpty {
-                NewsSourceSection(
-                    title: "Robinhood News",
-                    items: news.robinhoodNews,
-                    selectedURL: $selectedURL,
-                    showingSafari: $showingSafari
-                )
-            }
         }
         .padding()
         .background(Color(.systemBackground))
@@ -141,15 +133,6 @@ struct NewsViews_Previews: PreviewProvider {
                     date: nil,
                     published_at: "2024-01-01",
                     pubDate: nil,
-                    url: "https://example.com"
-                )
-            ],
-            robinhoodNews: [
-                StockNewsItem(
-                    title: "Sample Robinhood News",
-                    date: nil,
-                    published_at: nil,
-                    pubDate: "2024-01-01",
                     url: "https://example.com"
                 )
             ]
