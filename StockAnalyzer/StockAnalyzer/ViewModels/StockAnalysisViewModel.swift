@@ -85,3 +85,16 @@ class StockAnalysisViewModel: ObservableObject {
 struct APIErrorResponse: Codable {
     let detail: String
 }
+
+extension StockAnalysisViewModel {
+    @MainActor
+    func retryAnalysis(symbol: String, language: String) async {
+        // 이전 상태 초기화
+        result = nil
+        error = nil
+        isLoading = true
+        
+        // 분석 다시 시도
+        await analyzeStock(symbol: symbol, language: language)
+    }
+}

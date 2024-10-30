@@ -1,14 +1,33 @@
-
-//Views/Components/ErrorView.swift
 import SwiftUI
-import Combine  // ObservableObject와 @Published를 사용하기 위해 필요
 
+// Views/Components/ErrorView.swift를 수정
 struct ErrorView: View {
     let message: String
+    var onRetry: (() -> Void)? = nil
     
     var body: some View {
-        Text(message)
-            .foregroundColor(.red)
-            .padding()
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 40))
+                .foregroundColor(.orange)
+            
+            Text(message)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+            
+            if let onRetry = onRetry {
+                Button(action: onRetry) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Try Again")
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+            }
+        }
+        .padding()
     }
 }
