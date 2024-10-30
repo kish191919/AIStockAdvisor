@@ -3,6 +3,7 @@ import Charts
 import Combine
 
 struct ContentView: View {
+    // MARK: - Properties
     @StateObject private var viewModel = StockAnalysisViewModel()
     @StateObject private var yahooViewModel = YahooChartViewModel()
     @StateObject private var symbolValidator = StockSymbolValidator()
@@ -13,6 +14,7 @@ struct ContentView: View {
     @State private var selectedLanguage = "en"
     @State private var showingInvalidSymbolAlert = false
     @State private var showSuggestions = false
+    @State private var isViewAppeared = false
     @FocusState private var isTextFieldFocused: Bool
     
     let languages = [
@@ -39,112 +41,154 @@ struct ContentView: View {
         "ht": "Kreyòl ayisyen", "sn": "Shona", "si": "සිංහල"
     ]
     
+    // MARK: - Methods
     private func handleSymbolChange(_ newValue: String) {
-        stockSymbol = newValue.uppercased()
-        showSuggestions = !newValue.isEmpty
-        _ = symbolValidator.validateSymbolFormat(stockSymbol)
-        autocomplete.getSuggestions(for: newValue)
+        withAnimation {
+            stockSymbol = newValue.uppercased()
+            showSuggestions = !newValue.isEmpty
+            _ = symbolValidator.validateSymbolFormat(stockSymbol)
+            autocomplete.getSuggestions(for: newValue)
+        }
     }
     
     private func handleSymbolSelection(_ symbol: String) {
-        stockSymbol = symbol
-        showSuggestions = false
-        handleAnalysisSubmit()
+        withAnimation {
+            stockSymbol = symbol
+            showSuggestions = false
+            handleAnalysisSubmit()
+        }
     }
     
     private func handleAnalysisSubmit() {
         Task {
             isTextFieldFocused = false
             
-            // 심볼 형식 검증
             guard symbolValidator.validateSymbolFormat(stockSymbol) else {
                 showingInvalidSymbolAlert = true
                 return
             }
             
-            // 심볼 존재 여부 확인
             guard await symbolValidator.verifySymbolExists(stockSymbol) else {
                 showingInvalidSymbolAlert = true
                 return
             }
             
-            // 분석 실행
             await viewModel.analyzeStock(symbol: stockSymbol, language: selectedLanguage)
             if viewModel.result != nil {
-                viewModel.savePrediction(symbol: stockSymbol)
-                recentSymbolsManager.addSymbol(stockSymbol)
+                withAnimation {
+                    viewModel.savePrediction(symbol: stockSymbol)
+                    recentSymbolsManager.addSymbol(stockSymbol)
+                }
+                yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
             }
-            yahooViewModel.fetchChartData(symbol: stockSymbol, period: .oneDay)
         }
     }
     
-    var inputSection: some View {
-        VStack(spacing: 15) {
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 4) {
-                    TextField("Stock Symbol (e.g., AAPL)", text: $stockSymbol)
-                        .textInputAutocapitalization(.characters)
-                        .focused($isTextFieldFocused)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        #if compiler(>=5.9)
-                        .onChange(of: stockSymbol) { _, newValue in
-                            handleSymbolChange(newValue)
-                        }
-                        #else
-                        .onChange(of: stockSymbol) { newValue in
-                            handleSymbolChange(newValue)
-                        }
-                        #endif
-                    
-                    if !symbolValidator.isValid {
-                        Text(symbolValidator.errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
+    // MARK: - View Components
+    var searchBar: some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                TextField("Stock Symbol (e.g., AAPL)", text: $stockSymbol)
+                    .textInputAutocapitalization(.characters)
+                    .focused($isTextFieldFocused)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .foregroundColor(ColorTheme.text)
+                    #if compiler(>=5.9)
+                    .onChange(of: stockSymbol) { _, newValue in
+                        handleSymbolChange(newValue)
                     }
-                }
+                    #else
+                    .onChange(of: stockSymbol) { newValue in
+                        handleSymbolChange(newValue)
+                    }
+                    #endif
                 
-                Picker("Language", selection: $selectedLanguage) {
-                    ForEach(languages.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
-                        Text(value).tag(key)
-                    }
+                if !symbolValidator.isValid {
+                    Text(symbolValidator.errorMessage)
+                        .font(.caption)
+                        .foregroundColor(ColorTheme.error)
+                        .slideTransition(isPresented: !symbolValidator.isValid)
                 }
-                .pickerStyle(MenuPickerStyle())
-                .frame(width: 100)
             }
             
-            Button(action: handleAnalysisSubmit) {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    } else {
-                        Image(systemName: "magnifyingglass")
-                        Text("Analyze Stock")
-                    }
+            Picker("Language", selection: $selectedLanguage) {
+                ForEach(languages.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
+                    Text(value).tag(key)
                 }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 44)
-                .background(
-                    stockSymbol.isEmpty || viewModel.isLoading
-                    ? Color.blue.opacity(0.5)
-                    : Color.blue
-                )
-                .cornerRadius(10)
             }
-            .disabled(stockSymbol.isEmpty || viewModel.isLoading)
+            .pickerStyle(MenuPickerStyle())
+            .frame(width: 100)
+        }
+    }
+    
+    var searchButton: some View {
+        Button(action: handleAnalysisSubmit) {
+            HStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                } else {
+                    Image(systemName: "magnifyingglass")
+                    Text("Analyze Stock")
+                }
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .background(
+                stockSymbol.isEmpty || viewModel.isLoading
+                ? ColorTheme.accent.opacity(0.5)
+                : ColorTheme.accent
+            )
+            .cornerRadius(10)
+        }
+        .disabled(stockSymbol.isEmpty || viewModel.isLoading)
+        .slideTransition(isPresented: !stockSymbol.isEmpty)
+    }
+    
+    var searchSection: some View {
+        VStack(spacing: 15) {
+            searchBar
+            searchButton
         }
         .padding()
+        .background(ColorTheme.background)
+        .slideTransition(isPresented: isViewAppeared)
+    }
+    
+    var recentSearchesSection: some View {
+        RecentSymbolsView(manager: recentSymbolsManager) { symbol in
+            handleSymbolSelection(symbol)
+        }
+        .slideTransition(isPresented: isViewAppeared)
+    }
+    
+    var suggestionsSection: some View {
+        Group {
+            if showSuggestions && isTextFieldFocused {
+                SymbolAutocompleteView(suggestions: autocomplete.suggestions) { symbol in
+                    handleSymbolSelection(symbol)
+                }
+                .slideTransition(isPresented: showSuggestions)
+            }
+        }
     }
     
     var resultsSection: some View {
         ScrollView {
             if viewModel.isLoading {
                 LoadingView()
+                    .slideTransition(isPresented: viewModel.isLoading)
             } else if let error = viewModel.error {
                 ErrorView(message: error)
+                    .slideTransition(isPresented: true)
             } else if let result = viewModel.result {
-                ResultsContent(stockSymbol: stockSymbol, result: result)
+                ResultsContent(
+                    stockSymbol: stockSymbol,
+                    result: result,
+                    yahooViewModel: yahooViewModel
+                )
+                .slideTransition(isPresented: true)
             }
         }
         .onTapGesture {
@@ -153,23 +197,20 @@ struct ContentView: View {
         }
     }
     
+    // MARK: - Body
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    inputSection
-                    
-                    RecentSymbolsView(manager: recentSymbolsManager) { symbol in
-                        handleSymbolSelection(symbol)
+            ZStack {
+                ColorTheme.secondaryBackground
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 0) {
+                        searchSection
+                        recentSearchesSection
+                        suggestionsSection
+                        resultsSection
                     }
-                    
-                    if showSuggestions && isTextFieldFocused {
-                        SymbolAutocompleteView(suggestions: autocomplete.suggestions) { symbol in
-                            handleSymbolSelection(symbol)
-                        }
-                    }
-                    
-                    resultsSection
                 }
             }
             .navigationTitle("Stock Analyzer")
@@ -186,29 +227,24 @@ struct ContentView: View {
                 }
             }
         }
-    }
-}
-
-// MARK: - Supporting Views
-private struct LoadingView: View {
-    var body: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-                .scaleEffect(1.5)
-            Text("Analyzing...")
-                .foregroundColor(.secondary)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.5)) {
+                isViewAppeared = true
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 200)
     }
 }
 
-private struct ResultsContent: View {
+// MARK: - ResultsContent View
+struct ResultsContent: View {
     let stockSymbol: String
     let result: StockAnalysisResponse
+    @ObservedObject var yahooViewModel: YahooChartViewModel
+    @State private var selectedPoint: YahooChartDataPoint?
     
     var body: some View {
         VStack(spacing: 20) {
+            // Chart Section
             VStack(alignment: .leading) {
                 if !stockSymbol.isEmpty {
                     YahooFinanceChartView(symbol: stockSymbol)
@@ -216,19 +252,29 @@ private struct ResultsContent: View {
                 }
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(ColorTheme.background)
             .cornerRadius(10)
             .shadow(radius: 2)
             
+            // Analysis Results
             ResultView(result: result)
+                .slideTransition(isPresented: true)
+            
+            // News Section
             NewsListView(news: result.news)
+                .slideTransition(isPresented: true)
         }
         .padding()
     }
 }
 
+// MARK: - Preview Provider
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .preferredColorScheme(.light)
+        
+        ContentView()
+            .preferredColorScheme(.dark)
     }
 }
