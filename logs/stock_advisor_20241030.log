@@ -1,0 +1,150 @@
+2024-10-30 13:50:23,922 - root - INFO - Analyzing stock APX
+2024-10-30 13:50:23,922 - root - INFO - Analyzing stock APX
+2024-10-30 13:50:23,923 - APX_analyzer - INFO - Current OTP: 873476
+2024-10-30 13:50:23,923 - APX_analyzer - INFO - Current OTP: 873476
+2024-10-30 13:50:24,067 - APX_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-30 13:50:24,067 - APX_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-30 13:50:24,106 - APX_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-30 13:50:24,106 - APX_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-30 13:50:24,392 - APX_analyzer - INFO - Fetching chart data for APX
+2024-10-30 13:50:24,392 - APX_analyzer - INFO - Fetching chart data for APX
+2024-10-30 13:50:24,652 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1d)
+2024-10-30 13:50:24,652 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1d)
+2024-10-30 13:50:24,751 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1mo)
+2024-10-30 13:50:24,751 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1mo)
+2024-10-30 13:50:24,752 - APX_analyzer - WARNING - Failed to get data from Yahoo Finance : No data from Yahoo Finance. Trying Robinhood...
+2024-10-30 13:50:24,752 - APX_analyzer - WARNING - Failed to get data from Yahoo Finance : No data from Yahoo Finance. Trying Robinhood...
+2024-10-30 13:50:24,880 - root - INFO - Adding technical indicators
+2024-10-30 13:50:24,880 - root - INFO - Adding technical indicators
+2024-10-30 13:50:24,886 - root - ERROR - Error in _add_indicators: 'Date'
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 175, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index_class_helper.pxi", line 70, in pandas._libs.index.Int64Engine._check_type
+KeyError: 'Date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sunghwanki/Desktop/AIStockAdvisor/AIStockAdvisor.py", line 250, in _add_indicators
+    daily_df = create_dataframe(daily_data, timeframe='daily')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sunghwanki/Desktop/AIStockAdvisor/AIStockAdvisor.py", line 235, in create_dataframe
+    df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d %H:%M')
+                                ~~^^^^^^^^
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Date'
+2024-10-30 13:50:24,886 - root - ERROR - Error in _add_indicators: 'Date'
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 175, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index_class_helper.pxi", line 70, in pandas._libs.index.Int64Engine._check_type
+KeyError: 'Date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sunghwanki/Desktop/AIStockAdvisor/AIStockAdvisor.py", line 250, in _add_indicators
+    daily_df = create_dataframe(daily_data, timeframe='daily')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sunghwanki/Desktop/AIStockAdvisor/AIStockAdvisor.py", line 235, in create_dataframe
+    df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d %H:%M')
+                                ~~^^^^^^^^
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/robinhood/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Date'
+2024-10-30 13:50:24,894 - APX_analyzer - INFO - Fetching news from Yahoo Finance for APX
+2024-10-30 13:50:24,894 - APX_analyzer - INFO - Fetching news from Yahoo Finance for APX
+2024-10-30 13:50:25,028 - APX_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-30 13:50:25,028 - APX_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-30 13:50:25,029 - APX_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-30 13:50:25,029 - APX_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-30 13:50:25,145 - APX_analyzer - INFO - Retrieved 0 news items from Alpha Vantage
+2024-10-30 13:50:25,145 - APX_analyzer - INFO - Retrieved 0 news items from Alpha Vantage
+2024-10-30 13:50:25,147 - APX_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-30 13:50:25,147 - APX_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-30 13:50:25,464 - APX_analyzer - INFO - Fetching current price for APX
+2024-10-30 13:50:25,464 - APX_analyzer - INFO - Fetching current price for APX
+2024-10-30 13:50:25,645 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1d)
+2024-10-30 13:50:25,645 - yfinance - ERROR - $APX: possibly delisted; no price data found  (period=1d)
+2024-10-30 13:50:25,646 - APX_analyzer - WARNING - Error fetching from Yahoo Finance: No data from Yahoo Finance. Trying Robinhood...
+2024-10-30 13:50:25,646 - APX_analyzer - WARNING - Error fetching from Yahoo Finance: No data from Yahoo Finance. Trying Robinhood...
+2024-10-30 13:50:25,691 - APX_analyzer - ERROR - Error fetching from both sources: float() argument must be a string or a real number, not 'NoneType'
+2024-10-30 13:50:25,691 - APX_analyzer - ERROR - Error fetching from both sources: float() argument must be a string or a real number, not 'NoneType'
+2024-10-30 13:50:25,691 - APX_analyzer - INFO - Fetching VIX INDEX data
+2024-10-30 13:50:25,691 - APX_analyzer - INFO - Fetching VIX INDEX data
+2024-10-30 13:50:25,864 - APX_analyzer - INFO - Current VIX INDEX: 20.01
+2024-10-30 13:50:25,864 - APX_analyzer - INFO - Current VIX INDEX: 20.01
+2024-10-30 13:50:25,864 - APX_analyzer - ERROR - Failed to get current price. Aborting analysis.
+2024-10-30 13:50:25,864 - APX_analyzer - ERROR - Failed to get current price. Aborting analysis.
+2024-10-30 13:50:25,864 - root - ERROR - Error analyzing stock APX: not enough values to unpack (expected 8, got 6)
+2024-10-30 13:50:25,864 - root - ERROR - Error analyzing stock APX: not enough values to unpack (expected 8, got 6)
+2024-10-30 13:55:51,935 - root - INFO - Analyzing stock AXXXX
+2024-10-30 13:55:51,935 - root - INFO - Analyzing stock AXXXX
+2024-10-30 13:55:53,055 - yfinance - ERROR - 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/AXXXX?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=AXXXX&crumb=1rp.pk%2F4Sid
+2024-10-30 13:55:53,055 - yfinance - ERROR - 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/AXXXX?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=AXXXX&crumb=1rp.pk%2F4Sid
+2024-10-30 13:55:53,239 - root - ERROR - Error analyzing stock AXXXX: 'AIStockAdvisor' object has no attribute 'logger'
+2024-10-30 13:55:53,239 - root - ERROR - Error analyzing stock AXXXX: 'AIStockAdvisor' object has no attribute 'logger'
+2024-10-30 13:59:11,515 - root - INFO - Analyzing stock AXP
+2024-10-30 13:59:11,515 - root - INFO - Analyzing stock AXP
+2024-10-30 13:59:11,517 - AXP_analyzer - INFO - Current OTP: 901830
+2024-10-30 13:59:11,517 - AXP_analyzer - INFO - Current OTP: 901830
+2024-10-30 13:59:11,662 - AXP_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-30 13:59:11,662 - AXP_analyzer - INFO - Successfully logged in to Robinhood
+2024-10-30 13:59:11,702 - AXP_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-30 13:59:11,702 - AXP_analyzer - INFO - Database ai_stock_analysis_records.db setup completed
+2024-10-30 13:59:12,066 - AXP_analyzer - INFO - Fetching chart data for AXP
+2024-10-30 13:59:12,066 - AXP_analyzer - INFO - Fetching chart data for AXP
+2024-10-30 13:59:12,437 - root - INFO - Adding technical indicators
+2024-10-30 13:59:12,437 - root - INFO - Adding technical indicators
+2024-10-30 13:59:12,447 - AXP_analyzer - INFO - Fetching news from Yahoo Finance for AXP
+2024-10-30 13:59:12,447 - AXP_analyzer - INFO - Fetching news from Yahoo Finance for AXP
+2024-10-30 13:59:12,585 - AXP_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-30 13:59:12,585 - AXP_analyzer - INFO - Retrieved 5 news items from Yahoo Finance
+2024-10-30 13:59:12,585 - AXP_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-30 13:59:12,585 - AXP_analyzer - INFO - Fetching news from Alpha Vantage
+2024-10-30 13:59:12,711 - AXP_analyzer - INFO - Retrieved 0 news items from Alpha Vantage
+2024-10-30 13:59:12,711 - AXP_analyzer - INFO - Retrieved 0 news items from Alpha Vantage
+2024-10-30 13:59:12,712 - AXP_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-30 13:59:12,712 - AXP_analyzer - INFO - Fetching Fear and Greed Index
+2024-10-30 13:59:12,822 - AXP_analyzer - INFO - Fetching current price for AXP
+2024-10-30 13:59:12,822 - AXP_analyzer - INFO - Fetching current price for AXP
+2024-10-30 13:59:12,974 - AXP_analyzer - INFO - Current price from Yahoo Finance for AXP: $273.72
+2024-10-30 13:59:12,974 - AXP_analyzer - INFO - Current price from Yahoo Finance for AXP: $273.72
+2024-10-30 13:59:12,974 - AXP_analyzer - INFO - Fetching VIX INDEX data
+2024-10-30 13:59:12,974 - AXP_analyzer - INFO - Fetching VIX INDEX data
+2024-10-30 13:59:13,037 - AXP_analyzer - INFO - Current VIX INDEX: 20.0
+2024-10-30 13:59:13,037 - AXP_analyzer - INFO - Current VIX INDEX: 20.0
+2024-10-30 13:59:13,050 - AXP_analyzer - INFO - Token counts:
+                    System prompt: 201
+                    Input token : 5898
+                    Total: 6099
+                
+2024-10-30 13:59:13,050 - AXP_analyzer - INFO - Token counts:
+                    System prompt: 201
+                    Input token : 5898
+                    Total: 6099
+                
+2024-10-30 13:59:13,050 - AXP_analyzer - INFO - Sending request to OpenAI
+2024-10-30 13:59:13,050 - AXP_analyzer - INFO - Sending request to OpenAI
+2024-10-30 13:59:18,289 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-30 13:59:18,289 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-30 13:59:18,303 - AXP_analyzer - INFO - Received response from OpenAI
+2024-10-30 13:59:18,303 - AXP_analyzer - INFO - Received response from OpenAI
+2024-10-30 13:59:18,303 - AXP_analyzer - INFO - Translating text to ko
+2024-10-30 13:59:18,303 - AXP_analyzer - INFO - Translating text to ko
+2024-10-30 13:59:19,114 - AXP_analyzer - INFO - Translation successful
+2024-10-30 13:59:19,114 - AXP_analyzer - INFO - Translation successful

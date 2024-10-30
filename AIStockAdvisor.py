@@ -10,8 +10,6 @@ import json
 import requests
 import numpy as np
 import re
-
-
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -20,26 +18,58 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from transformers import GPT2TokenizerFast
 from datetime import date, datetime
-from youtube_transcript_api import YouTubeTranscriptApi
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.decomposition import PCA
+from logging.handlers import TimedRotatingFileHandler
 
 # 데이터프레임 출력 설정 변경
 pd.set_option('display.max_columns', None)  # 모든 컬럼 표시
 pd.set_option('display.width', 1000)        # 출력 폭 확대
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+
+def setup_logging(log_dir='logs', backup_count=30):
+    """
+    Configure logging with date in filename
+    """
+    # Create logs directory
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # Get current date for filename
+    current_date = datetime.now().strftime('%Y%m%d')
+    log_filename = f'stock_advisor_{current_date}.log'
+
+    # Set log file path
+    log_file = os.path.join(log_dir, log_filename)
+
+    # Basic logging config
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+    # File handler with daily rotation
+    file_handler = TimedRotatingFileHandler(
+        filename=log_file,
+        when='midnight',
+        interval=1,
+        backupCount=backup_count,
+        encoding='utf-8'
+    )
+
+    # Set formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    # Add handler to root logger
+    logger = logging.getLogger()
+    logger.addHandler(file_handler)
+
+    return logger
+
+
 # Load environment variables and set up logging
 load_dotenv()
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('stock_advisor.log')
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # Configuration class
 class Config:
@@ -57,83 +87,6 @@ class TradingDecision(BaseModel):
     percentage: int
     reason: str
     expected_next_day_price: float
-
-
-class TechnicalDataProcessor:
-    def __init__(self, variance_ratio_threshold=0.95):
-        self.variance_ratio_threshold = variance_ratio_threshold
-        self.scalers = {}
-        self.pcas = {}
-        self.feature_names = {}
-
-    def _prepare_dataframe(self, df):
-        """
-        Prepare DataFrame by handling missing values and selecting numeric columns
-        """
-        # Select only numeric columns
-        numeric_df = df.select_dtypes(include=[np.number])
-
-        # Drop columns where all values are NaN
-        numeric_df = numeric_df.dropna(axis=1, how='all')
-
-        # 경고를 피하기 위해 ffill()과 bfill() 직접 사용
-        numeric_df = numeric_df.ffill()
-        numeric_df = numeric_df.bfill()
-
-        # If there are still any NaN values, replace them with 0
-        numeric_df = numeric_df.fillna(0)
-
-        # Drop any columns that still have NaN values
-        numeric_df = numeric_df.dropna(axis=1)
-
-        # Ensure we have at least one column
-        if numeric_df.empty or len(numeric_df.columns) == 0:
-            raise ValueError("No valid numeric columns remaining after NaN handling")
-
-        return numeric_df
-
-    # Fit PCA and transform data
-    def fit_transform(self, df, prefix):
-
-        # Prepare data
-        numeric_df = self._prepare_dataframe(df)
-        original_index = numeric_df.index
-
-        # Store feature names
-        self.feature_names[prefix] = numeric_df.columns.tolist()
-
-        # Scale the data
-        scaler = StandardScaler()
-        scaled_data = scaler.fit_transform(numeric_df)
-        self.scalers[prefix] = scaler
-
-        # Apply PCA
-        pca = PCA()
-        transformed_data = pca.fit_transform(scaled_data)
-        self.pcas[prefix] = pca
-
-        # Determine number of components needed
-        cumulative_variance_ratio = np.cumsum(pca.explained_variance_ratio_)
-        n_components = np.argmax(cumulative_variance_ratio >= self.variance_ratio_threshold) + 1
-
-        # Create DataFrame with reduced components
-        columns = [f'PC{i + 1}' for i in range(n_components)]
-        pca_df = pd.DataFrame(
-            transformed_data[:, :n_components],
-            columns=columns,
-            index=original_index
-        )
-
-        # Add variance explained information
-        variance_explained = {
-            f'{prefix}_variance_explained': {
-                'total_variance_preserved': float(cumulative_variance_ratio[n_components - 1]),
-                'n_components': int(n_components),
-                'component_variance_ratios': pca.explained_variance_ratio_[:n_components].tolist()
-            }
-        }
-
-        return pca_df, variance_explained
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -286,7 +239,7 @@ class AIStockAdvisor:
                 # OHLC 가격 데이터는 소수점 2자리로 고정
                 price_columns = ['Open', 'Close', 'High', 'Low']
                 for col in price_columns:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
+                    df[col] = pd.to_numeric(df[col], errors='coerce').round(2)
 
                 # Volume은 정수로 변환
                 df['Volume'] = pd.to_numeric(df['Volume'], errors='coerce').astype(int)
@@ -294,116 +247,15 @@ class AIStockAdvisor:
                 df.set_index('Date', inplace=True)
                 return df[['Open', 'High', 'Low', 'Close', 'Volume']]
 
-            # 볼린저 밴드 함수 추가
-            def add_bollinger_bands(df, window=20, num_std=2):
-                df['BB_Middle'] = df['Close'].rolling(window=window).mean().round(4)
-                bb_std = df['Close'].rolling(window=window).std()
-                df['BB_Upper'] = (df['BB_Middle'] + (bb_std * num_std)).round(4)
-                df['BB_Lower'] = (df['BB_Middle'] - (bb_std * num_std)).round(4)
-                df['BB_Width'] = ((df['BB_Upper'] - df['BB_Lower']) / df['BB_Middle'] * 100).round(4)
-                return df
-
-            # ADX 함수 추가
-            def add_adx(df, period=14):
-                # True Range 계산
-                df['TR'] = pd.DataFrame([
-                    df['High'] - df['Low'],
-                    abs(df['High'] - df['Close'].shift(1)),
-                    abs(df['Low'] - df['Close'].shift(1))
-                ]).max()
-
-                # +DM, -DM 계산
-                df['Plus_DM'] = np.where(
-                    (df['High'] - df['High'].shift(1)) > (df['Low'].shift(1) - df['Low']),
-                    np.maximum(df['High'] - df['High'].shift(1), 0),
-                    0
-                )
-                df['Minus_DM'] = np.where(
-                    (df['Low'].shift(1) - df['Low']) > (df['High'] - df['High'].shift(1)),
-                    np.maximum(df['Low'].shift(1) - df['Low'], 0),
-                    0
-                )
-
-                # ATR과 DI 계산
-                atr = df['TR'].ewm(span=period, adjust=False).mean()
-                plus_di = (df['Plus_DM'].ewm(span=period, adjust=False).mean() / atr * 100)
-                minus_di = (df['Minus_DM'].ewm(span=period, adjust=False).mean() / atr * 100)
-
-                # ADX 계산
-                df['ADX'] = (abs(plus_di - minus_di) / (plus_di + minus_di) * 100) \
-                    .ewm(span=period, adjust=False).mean().round(4)
-
-                # 중간 계산 컬럼 제거
-                df.drop(['TR', 'Plus_DM', 'Minus_DM'], axis=1, inplace=True)
-                return df
-
             daily_df = create_dataframe(daily_data, timeframe='daily')
             monthly_df = create_dataframe(monthly_data, timeframe='monthly')
 
-            # 1. 일일 데이터 핵심 지표 계산
-            if not daily_df.empty:
-                logger.info("Processing daily indicators")
-                # 주요 이동평균선 (소수점 4자리)
-                daily_df['MA5'] = daily_df['Close'].rolling(window=5).mean().round(4)
-                daily_df['MA20'] = daily_df['Close'].rolling(window=20).mean().round(4)
-
-                # MACD (소수점 4자리)
-                ema12 = daily_df['Close'].ewm(span=12, adjust=False).mean()
-                ema26 = daily_df['Close'].ewm(span=26, adjust=False).mean()
-                daily_df['MACD'] = (ema12 - ema26).round(4)
-                daily_df['Signal_Line'] = daily_df['MACD'].ewm(span=9, adjust=False).mean().round(4)
-
-                # RSI (소수점 4자리)
-                delta = daily_df['Close'].diff()
-                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                daily_df['RSI'] = (100 - (100 / (1 + gain / loss))).round(4)
-
-                # 거래량 동향 (소수점 4자리)
-                volume_ma20 = daily_df['Volume'].rolling(window=20).mean()
-                daily_df['Volume_Trend'] = (daily_df['Volume'] / volume_ma20).round(4)
-
-                # 볼린저 밴드 추가
-                daily_df = add_bollinger_bands(daily_df)
-
-                # ADX 추가
-                daily_df = add_adx(daily_df)
-
-                # OHLC 데이터 소수점 2자리로 설정
-                daily_df[['Open', 'Close', 'High', 'Low']] = daily_df[['Open', 'Close', 'High', 'Low']].round(2)
-
-            # 2. 월간 데이터 핵심 지표 계산
-            if not monthly_df.empty:
-                logger.info("Processing monthly indicators")
-                # 중장기 이동평균 (소수점 4자리)
-                monthly_df['MA20'] = monthly_df['Close'].rolling(window=20).mean().round(4)
-
-                # 월간 RSI (소수점 4자리)
-                delta = monthly_df['Close'].diff()
-                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                monthly_df['Monthly_RSI'] = (100 - (100 / (1 + gain / loss))).round(4)
-
-                # 거래량 동향 (소수점 4자리)
-                volume_ma20 = monthly_df['Volume'].rolling(window=20).mean()
-                monthly_df['Volume_Trend'] = (monthly_df['Volume'] / volume_ma20).round(4)
-
-                # 수익률 (소수점 4자리)
-                monthly_df['Monthly_Return'] = monthly_df['Close'].pct_change(20).round(4)
-
-                # 월간 데이터에도 볼린저 밴드와 ADX 추가
-                monthly_df = add_bollinger_bands(monthly_df)
-                monthly_df = add_adx(monthly_df)
-
-                # OHLC 데이터 소수점 2자리로 설정
-                monthly_df[['Open', 'Close', 'High', 'Low']] = monthly_df[['Open', 'Close', 'High', 'Low']].round(2)
-
-            logger.info("Completed adding optimized indicators")
             return monthly_df, daily_df
 
         except Exception as e:
             logger.error(f"Error in _add_indicators: {str(e)}", exc_info=True)
             return pd.DataFrame(), pd.DataFrame()
+
 
     def get_vix_index(self):
         self.logger.info("Fetching VIX INDEX data")
@@ -592,10 +444,6 @@ class AIStockAdvisor:
     def ai_stock_analysis(self):
         monthly_df, daily_df = self.get_chart_data()
         news = self.get_news()
-        f = open("strategy.txt", "r")
-        strategy = f.read()
-        f.close()
-
         fgi = self.get_fear_and_greed_index()
         current_price = self.get_current_price()
         vix_index = self.get_vix_index()
@@ -623,34 +471,28 @@ class AIStockAdvisor:
             "fear_and_greed_index": fgi,
             "vix_index": vix_index,
             "news": news,
-            "current_price": current_price
+            "current_stock_price": current_price
         }, cls=CustomJSONEncoder)
 
-        print("input_data: ", input_data)
         optimized_input = self.optimize_input_data(input_data)
 
         # 토큰 수 계산 및 로깅
-        system_prompt = f"""You are an expert in stock investing. Analyze the following elements: market data, recent news headlines, the Fear and Greed Index, and the VIX index.
-
-Based on your analysis, including {strategy}, provide:
-
-A decision (BUY, SELL, or HOLD).
-An intensity level as a percentage (1 to 100) reflecting your conviction in the decision.
-A reason for your decision based on reliable analysis.
-A prediction for the next day's closing price.
-Explain your analysis clearly and simply, suitable for someone new to stocks. If you mention terms like MA5, MA20, MACD, Signal Line, RSI, Volume Trend, Monthly RSI, or Monthly Return, please provide simple explanations for them."""
+        system_prompt = f"""YYou are a stock investment expert. First, you analyze market data in detail using Moving Average (MA), MACD, ADX, RSI, Bollinger Bands. For beginners, you explain these terms in an easy-to-understand way.
+        You also analyze recent news headlines, Fear and Greed Index, VIX Index, current stock price and make stock trading decisions based on all of this analysis.
+        Response Format:
+        - Decision (Buy, Sell or Hold).
+        - Strength level (1-100) reflecting your confidence in the decision.
+        - Reason for decision based on reliable analysis.
+        - Prediction for the closing price the next day.
+        For beginners in stock investment, the explanation should be clear and simple.."""
 
         system_tokens = self.count_tokens(system_prompt)
-        input_tokens = self.count_tokens(input_data)
         optimized_input_tokens = self.count_tokens(optimized_input)
-        strategy_tokens = self.count_tokens(strategy)
 
         self.logger.info(f"""Token counts:
                     System prompt: {system_tokens}
-                    Input token : {input_tokens}
-                    optimized_input_tokens: {optimized_input_tokens}
-                    strategy : {strategy_tokens}
-                    Total: {system_tokens + optimized_input_tokens + strategy_tokens }
+                    Input token : {optimized_input_tokens}
+                    Total: {system_tokens + optimized_input_tokens }
                 """)
 
         self.logger.info("Sending request to OpenAI")
@@ -704,8 +546,6 @@ Explain your analysis clearly and simply, suitable for someone new to stocks. If
             'ExpectedNextDayPrice': round(result.expected_next_day_price, 2),
             'VIX_INDEX': vix_index
         })
-        print("result:", result)
-        print("input:",input_data )
         return result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df
 
 
@@ -765,9 +605,6 @@ async def analyze_stock(request: StockAnalysisRequest):
 
         # 분석 실행
         result, reason_translated, news, fgi, current_price, vix_index, monthly_df, daily_df = advisor.ai_stock_analysis()
-
-        print(monthly_df)
-        print(daily_df)
 
         # DataFrame 직렬화
         monthly_df_serialized = serialize_dataframe(monthly_df)
